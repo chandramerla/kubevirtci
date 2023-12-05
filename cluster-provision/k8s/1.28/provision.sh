@@ -20,7 +20,7 @@ function replaceKubeBinaries() {
 
   BIN_DIR="/usr/bin"
   RELEASE="v$version"
-  ARCH="amd64"
+  ARCH="s390"
 
   curl -L --remote-name-all https://dl.k8s.io/release/${RELEASE}/bin/linux/${ARCH}/kubeadm -o ${BIN_DIR}/kubeadm
   curl -L --remote-name-all https://dl.k8s.io/release/${RELEASE}/bin/linux/${ARCH}/kubelet -o ${BIN_DIR}/kubelet
