@@ -60,7 +60,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	if err != nil {
 		return err
 	}
-	base := fmt.Sprintf("quay.io/kubevirtci/%s", strings.TrimSpace(string(baseBytes)))
+	base := fmt.Sprintf("quay.io/jitensin/%s", strings.TrimSpace(string(baseBytes)))
 
 	containerSuffix, err := cmd.Flags().GetString("container-suffix")
 	if err != nil {
@@ -71,7 +71,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		name = fmt.Sprintf("%s-%s", name, containerSuffix)
 	}
 	prefix := fmt.Sprintf("k8s-%s-provision", name)
-	target := fmt.Sprintf("quay.io/kubevirtci/k8s-%s", name)
+	target := fmt.Sprintf("quay.io/jitensin/k8s-%s", name)
 	scripts := filepath.Join(packagePath)
 
 	phases, err := cmd.Flags().GetString("phases")
@@ -185,8 +185,8 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 			fmt.Sprintf("NODE_NUM=%s", nodeNum),
 		},
 		Volumes: map[string]struct{}{
-			"/var/run/disk":     {},
-			"/var/lib/registry": {},
+			"/var/run/disk2":     {},
+			"/var/lib/registry2": {},
 		},
 		Cmd: []string{"/bin/bash", "-c", fmt.Sprintf("/vm.sh --memory %s --cpu %s %s", memory, strconv.Itoa(int(cpu)), qemuArgs)},
 	}, &container.HostConfig{
@@ -220,35 +220,52 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	}
 
 	// Wait for ssh.sh script to exist
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do sleep 1; done", "checking for ssh.sh script")
-	if err != nil {
-		return err
-	}
+	logrus.Info("Wait for ssh.sh script to exist")
+        err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do echo 'Waiting for /ssh_ready...'; ls -l /; sleep 1; done", "checking for ssh.sh script")
+        if err != nil {
+		logrus.Info("Error: Wait for ssh.sh script to exist")
+                return err
+        }
+
+	// Wait for ssh.sh script to exist
+	//err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do sleep 1; done", "checking for ssh.sh script")
+	//if err != nil {
+	//	return err
+	//}
 
 	// Wait for the VM to be up
+	logrus.Info("Wait for the VM to be up")
+	//time.Sleep(300 * time.Second)
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh.sh echo VM is up", "waiting for node to come up")
 	if err != nil {
+		logrus.Info("Error :Wait for the VM to be up")
+		//time.Sleep(300 * time.Second)
 		return err
 	}
 
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/extra-pre-pull-images vagrant@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
+	logrus.Info("DEBUG - scp scripting")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/extra-pre-pull-images root@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
 	if err != nil {
 		return err
 	}
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/fetch-images.sh vagrant@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
+	logrus.Info("DEBUG - scp scripting2")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/fetch-images.sh root@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
 	if err != nil {
 		return err
 	}
 
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key vagrant@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
+	logrus.Info("DEBUG - scp scripting3")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key root@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
 	if err != nil {
 		return err
 	}
 
+	logrus.Info("DEBUG - scp scripting4")
 	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
 	if strings.Contains(phases, "linux") {
 		// Copy manifests to the VM
-		err = _cmd(cli, nodeContainer(prefix, nodeName), "scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/manifests/* vagrant@192.168.66.101:/tmp", "copying manifests to the VM")
+	        logrus.Info("DEBUG - Copy manifests to the VM")
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/manifests/* root@192.168.66.101:/tmp", "copying manifests to the VM")
 		if err != nil {
 			return err
 		}
@@ -259,12 +276,14 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		}
 	}
 	if strings.Contains(phases, "k8s") {
+	        logrus.Info("DEBUG - k8s provision")
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/k8s_provision.sh", envVars)
 		if err != nil {
 			return err
 		}
 	}
 
+	logrus.Info("DEBUG - ssh.sh sudo shutdown")
 	_cmd(cli, nodeContainer(prefix, nodeName), "ssh.sh sudo shutdown now -h", "shutting down the node")
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "rm /usr/local/bin/ssh.sh", "removing the ssh.sh script")
 	if err != nil {

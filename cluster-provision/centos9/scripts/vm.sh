@@ -48,10 +48,19 @@ cat >/usr/local/bin/ssh.sh <<EOL
 #!/bin/bash
 set -e
 dockerize -wait tcp://192.168.66.1${n}:22 -timeout 300s &>/dev/null
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no vagrant@192.168.66.1${n} -i vagrant.key -p 22 -q \$@
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no centos@192.168.66.1${n} -i s390x_centos.key -p 22 -q \$@
 EOL
 chmod u+x /usr/local/bin/ssh.sh
-echo "done" >/ssh_ready
+echo "-------------------"
+echo "-------------------"
+ls /usr/local/bin/ssh.sh
+pwd
+echo "-------------------"
+echo "-------------------"
+echo "done" > /ssh_ready
+ls /ssh_ready
+cat /ssh_ready
+
 
 sleep 0.1
 until ip link show tap${n}; do
@@ -64,7 +73,15 @@ if [ -f /run/.containerenv ]; then
   ROOTLESS=$(sed -n 's/^rootless=//p' /run/.containerenv)
 fi
 
+############## test ###########
+ip ad
+
+sh /usr/local/bin/ssh.sh
+
 # Route SSH
+iptables -h
+dnf install iptables -y
+
 iptables -t nat -A POSTROUTING ! -s 192.168.66.0/16 --out-interface br0 -j MASQUERADE
 if [ "$ROOTLESS" -ne 1 ]; then
   iptables -A FORWARD --in-interface eth0 -j ACCEPT
@@ -162,17 +179,9 @@ for size in ${USB_SIZES[@]}; do
   qemu-img create -f raw $disk $size
   let "disk_num+=1"
 done
+echo "--DEBUG--"
+cat ${QEMU_ARGS}
+echo "--DEBUG--"
 
 
-exec qemu-system-x86_64 -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe ${block_dev_arg} \
-  -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:${n} \
-  -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
-  -device virtio-rng-pci \
-  -initrd /initrd.img \
-  -kernel /vmlinuz \
-  -append "$(cat /kernel.args) $(cat /additional.kernel.args) ${KERNEL_ARGS}" \
-  -vnc :${n} -cpu host,migratable=no,+invtsc -m ${MEMORY} -smp ${CPU} \
-  -serial pty -M q35,accel=kvm,kernel_irqchip=split \
-  -device intel-iommu,intremap=on,caching-mode=on -device intel-hda -device hda-duplex -device AC97 \
-  -uuid $(cat /proc/sys/kernel/random/uuid) \
-  ${QEMU_ARGS}
+exec qemu-system-s390x -enable-kvm -drive format=qcow2,file=box.qcow2,if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:01 -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng-pci -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)  ${QEMU_ARGS}

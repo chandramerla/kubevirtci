@@ -1,6 +1,6 @@
 #!/bin/bash
 # DO NOT RUN THIS SCRIPT, USE SCRIPTS UNDER VERSIONS DIRECTORIES
-
+#source ../../podman_env_Setup.sh
 set -ex
 
 PHASES_DEFAULT="linux,k8s"
@@ -37,6 +37,9 @@ SLIM_MODE=""
 if ${SLIM}; then
   SLIM_MODE="--slim"
 fi
+
+echo ${PHASES} 
+echo ${SLIM_MODE}
 
 ../gocli/build/cli provision ${provision_dir} --phases ${PHASES} ${SLIM_MODE}
 
