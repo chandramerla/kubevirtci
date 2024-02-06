@@ -46,9 +46,9 @@ n="$(printf "%02d" $(( 10#${NODE_NUM} )))"
 
 cat >/usr/local/bin/ssh.sh <<EOL
 #!/bin/bash
-set -e
+set -ex
 dockerize -wait tcp://192.168.66.1${n}:22 -timeout 300s &>/dev/null
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no centos@192.168.66.1${n} -i s390x_centos.key -p 22 -q \$@
+ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no centos@192.168.66.1${n} -i s390x_centos.key -p 22 -q \$@
 EOL
 chmod u+x /usr/local/bin/ssh.sh
 echo "-------------------"
@@ -58,6 +58,7 @@ pwd
 echo "-------------------"
 echo "-------------------"
 echo "done" > /ssh_ready
+cat /usr/local/bin/ssh.sh
 ls /ssh_ready
 cat /ssh_ready
 
