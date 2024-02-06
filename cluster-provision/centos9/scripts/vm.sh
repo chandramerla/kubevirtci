@@ -77,7 +77,7 @@ fi
 ############## test ###########
 ip ad
 
-sh /usr/local/bin/ssh.sh
+#sh /usr/local/bin/ssh.sh
 
 # Route SSH
 iptables -h
