@@ -185,7 +185,7 @@ cat ${QEMU_ARGS}
 echo "--DEBUG--"
 
 
-exec qemu-system-s390x -enable-kvm -drive format=qcow2,file=box.qcow2,if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:01 -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng-pci -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)  ${QEMU_ARGS}
+qemu-system-s390x -enable-kvm -drive format=qcow2,file=box.qcow2,if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:01 -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng-pci -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)  ${QEMU_ARGS}
 
 #DEBUG
 echo "Before sleep after qemu"
