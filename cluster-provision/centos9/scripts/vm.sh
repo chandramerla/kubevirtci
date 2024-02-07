@@ -47,7 +47,7 @@ n="$(printf "%02d" $(( 10#${NODE_NUM} )))"
 cat >/usr/local/bin/ssh.sh <<EOL
 #!/bin/bash
 set -ex
-dockerize -wait tcp://192.168.66.1${n}:22 -timeout 300s &>/dev/null
+dockerize -wait tcp://192.168.66.1${n}:22 -timeout 3600s &>/dev/null
 ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no centos@192.168.66.1${n} -i s390x_centos.key -p 22 -q \$@
 EOL
 chmod u+x /usr/local/bin/ssh.sh
@@ -184,11 +184,12 @@ echo "--DEBUG--"
 cat ${QEMU_ARGS}
 echo "--DEBUG--"
 
-qemu_log="qemu_log.txt"
-qemu-system-s390x -enable-kvm -drive format=qcow2,file=box.qcow2,if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:01 -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng-pci -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)  ${QEMU_ARGS}  >"$qemu_log" 2>&1
 
-cat "qemu_log.txt"
+# qemu_log="qemu_log.txt"
+# qemu-system-s390x -enable-kvm -drive format=qcow2,file=box.qcow2,if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-pci,netdev=network0,mac=52:55:00:d1:55:01 -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng-pci -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)  ${QEMU_ARGS}  >"$qemu_log" 2>&1
+
+# cat "qemu_log.txt"
 #DEBUG
 echo "Before sleep after qemu"
-sleep 300
+sleep 3600
 echo "Before sleep after qemu"
