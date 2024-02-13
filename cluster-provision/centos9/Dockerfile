@@ -31,7 +31,7 @@ RUN echo "Centos9 version $centos_version"
 
 #RUN /download_box.sh ${CENTOS_URL}
 
-COPY  /tmp/CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
+COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 #RUN curl -L -o /initrd.img http://mirror.stream.centos.org/9-stream/BaseOS/s390x/os/images/initrd.img
 #RUN curl -L -o /vmlinuz http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/images/pxeboot/vmlinuz
 
