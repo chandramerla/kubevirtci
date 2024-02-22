@@ -47,7 +47,7 @@ n="$(printf "%02d" $(( 10#${NODE_NUM} )))"
 cat >/usr/local/bin/ssh.sh <<EOL
 #!/bin/bash
 set -ex
-dockerize -wait tcp://192.168.66.1${n}:24 -timeout 180s &>/dev/null
+dockerize -wait tcp://192.168.66.1${n}:24 -timeout 1800s &>/dev/null
 ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.1${n} -i s390x_cloud-user.key -p 22 -q \$@
 EOL
 chmod u+x /usr/local/bin/ssh.sh
