@@ -29,6 +29,8 @@ function replaceKubeadmBinary() {
   cd -
 }
 
+echo "started executing 1.27 provision.sh"
+
 if [ ! -f "/tmp/extra-pre-pull-images" ]; then
     echo "ERROR: extra-pre-pull-images list missing"
     exit 1
@@ -45,6 +47,7 @@ else
   exit 1
 fi
 
+echo "1started executing 1.27 provision.sh"
 KUBEVIRTCI_SHARED_DIR=/var/lib/kubevirtci
 mkdir -p $KUBEVIRTCI_SHARED_DIR
 export ISTIO_VERSION=1.15.0
@@ -57,6 +60,7 @@ export ISTIO_BIN_DIR="/opt/istio-${ISTIO_VERSION}/bin"
 EOF
 source $KUBEVIRTCI_SHARED_DIR/shared_vars.sh
 
+echo "2started executing 1.27 provision.sh"
 function pull_container_retry() {
     retry=0
     maxRetries=5
@@ -74,9 +78,11 @@ function pull_container_retry() {
     fi
 }
 
+
 # Install modules of the initrd kernel
 dnf install -y "kernel-modules-$(uname -r)"
 
+echo "3started executing 1.27 provision.sh"
 # Resize root partition
 dnf install -y cloud-utils-growpart
 if growpart /dev/vda 1; then
