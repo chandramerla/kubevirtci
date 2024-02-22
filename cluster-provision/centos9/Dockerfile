@@ -8,9 +8,9 @@ RUN dnf -y install jq iptables iproute dnsmasq qemu openssh-clients screen bind-
 
 WORKDIR /
 
-COPY s390x_centos.key /s390x_centos.key
+COPY s390x_cloud-user.key /s390x_cloud-user.key
 
-RUN chmod 700 s390x_centos.key
+RUN chmod 700 s390x_cloud-user.key
 
 ENV DOCKERIZE_VERSION v0.6.1
 

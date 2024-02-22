@@ -221,11 +221,11 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 
 	// Wait for ssh.sh script to exist
 	logrus.Info("Wait for ssh.sh script to exist")
-        err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do echo 'Waiting for /ssh_ready...'; ls -l /; sleep 1; done", "checking for ssh.sh script")
-        if err != nil {
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do echo 'Waiting for /ssh_ready...'; ls -l /; sleep 1; done", "checking for ssh.sh script")
+	if err != nil {
 		logrus.Info("Error: Wait for ssh.sh script to exist")
-                return err
-        }
+		return err
+	}
 
 	// Wait for ssh.sh script to exist
 	//err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do sleep 1; done", "checking for ssh.sh script")
@@ -244,18 +244,18 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	}
 
 	logrus.Info("DEBUG - scp scripting")
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/extra-pre-pull-images root@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/extra-pre-pull-images root@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
 	if err != nil {
 		return err
 	}
 	logrus.Info("DEBUG - scp scripting2")
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/fetch-images.sh root@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/fetch-images.sh root@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
 	if err != nil {
 		return err
 	}
 
 	logrus.Info("DEBUG - scp scripting3")
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key root@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
+	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key root@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
 	if err != nil {
 		return err
 	}
@@ -264,8 +264,8 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
 	if strings.Contains(phases, "linux") {
 		// Copy manifests to the VM
-	        logrus.Info("DEBUG - Copy manifests to the VM")
-		err = _cmd(cli, nodeContainer(prefix, nodeName), "scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_centos.key -P 22 /scripts/manifests/* root@192.168.66.101:/tmp", "copying manifests to the VM")
+		logrus.Info("DEBUG - Copy manifests to the VM")
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/manifests/* root@192.168.66.101:/tmp", "copying manifests to the VM")
 		if err != nil {
 			return err
 		}
@@ -276,7 +276,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		}
 	}
 	if strings.Contains(phases, "k8s") {
-	        logrus.Info("DEBUG - k8s provision")
+		logrus.Info("DEBUG - k8s provision")
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/k8s_provision.sh", envVars)
 		if err != nil {
 			return err
