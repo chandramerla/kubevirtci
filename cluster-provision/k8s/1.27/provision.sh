@@ -130,7 +130,7 @@ cat << EOF >/etc/yum.repos.d/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSI
 [devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}]
 name=devel:kubic:libcontainers:stable:cri-o:${CRIO_VERSION} (CentOS_9_Stream)
 type=rpm-md
-baseurl=https://storage.googleapis.com/kubevirtci-crio-mirror/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}
+baseurl=https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${CRIO_VERSION}/CentOS_9_Stream/
 gpgcheck=0
 enabled=1
 EOF
