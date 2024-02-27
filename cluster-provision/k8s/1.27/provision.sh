@@ -190,8 +190,8 @@ fi
 
 kubeadm config images pull --kubernetes-version ${version}
 
-dnf install --verbose -y centos-release-nfv-openvswitch
-dnf install --verbose -y openvswitch2.16
+#dnf install --verbose -y centos-release-nfv-openvswitch
+#dnf install --verbose -y openvswitch2.16
 
 mkdir -p /provision
 
