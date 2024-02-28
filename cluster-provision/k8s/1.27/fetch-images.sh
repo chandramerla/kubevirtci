@@ -49,8 +49,6 @@ function main() {
     ) | grep -ioE "${image_regex_w_double_quotes}"'$' | grep -v '.svc:' >>"${temp_file}"
 
     sed -E 's/"//g' "${temp_file}" | sort | uniq
-
-    cat "${temp_file}"
 }
 
 main "$@"

@@ -213,8 +213,22 @@ mv -f /tmp/grafana-deployment.yaml.tmp /tmp/prometheus/grafana/grafana-deploymen
 if [[ ${slim} == false ]]; then
     # Pre pull all images from the manifests
     for image in $(/tmp/fetch-images.sh /tmp); do
-        pull_container_retry "${image}"
+      echo "${image}"
     done
+    echo "printed all image names"
+    for image in $(/tmp/fetch-images.sh /tmp); do
+      if [[ ! "${image}" == *"multus-dynamic-networks-controller"* ]]; then
+        pull_container_retry "${image}"
+      else        
+        git clone https://github.com/k8snetworkplumbingwg/multus-dynamic-networks-controller.git
+        cd multus-dynamic-networks-controller
+        git checkout 489cb557d9a7b706a42a3fd233fb1977767bf2be
+        docker build -t ghcr.io/k8snetworkplumbingwg/multus-dynamic-networks-controller:latest-s390x -f images/Dockerfile --build-arg git_sha=489cb557d9a7b706a42a3fd233fb1977767bf2be .
+        cd ..
+      fi
+    done
+
+
 
     # Pre pull additional images from list
     for image in $(cat "/tmp/extra-pre-pull-images"); do
