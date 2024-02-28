@@ -220,6 +220,7 @@ if [[ ${slim} == false ]]; then
       if [[ ! "${image}" == *"multus-dynamic-networks-controller"* ]]; then
         pull_container_retry "${image}"
       else        
+        dnf install git -y
         git clone https://github.com/k8snetworkplumbingwg/multus-dynamic-networks-controller.git
         cd multus-dynamic-networks-controller
         git checkout 489cb557d9a7b706a42a3fd233fb1977767bf2be
