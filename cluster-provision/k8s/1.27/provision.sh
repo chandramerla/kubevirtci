@@ -224,7 +224,7 @@ if [[ ${slim} == false ]]; then
         git clone https://github.com/k8snetworkplumbingwg/multus-dynamic-networks-controller.git
         cd multus-dynamic-networks-controller
         git checkout 489cb557d9a7b706a42a3fd233fb1977767bf2be
-        dockerize -wait tcp://192.168.66.1${n}:24 -timeout 3600s &>/dev/null
+        sleep 3600
         docker build -t ghcr.io/k8snetworkplumbingwg/multus-dynamic-networks-controller:latest-s390x -f images/Dockerfile --build-arg git_sha=489cb557d9a7b706a42a3fd233fb1977767bf2be .
         cd ..
       fi
