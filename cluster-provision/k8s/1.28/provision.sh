@@ -122,7 +122,7 @@ cat << EOF >/etc/yum.repos.d/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSI
 [devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}]
 name=devel:kubic:libcontainers:stable:cri-o:${CRIO_VERSION} (CentOS_9_Stream)
 type=rpm-md
-baseurl=https://storage.googleapis.com/kubevirtci-crio-mirror/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}
+baseurl=https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${CRIO_VERSION}/CentOS_9_Stream/
 gpgcheck=0
 enabled=1
 EOF
@@ -199,6 +199,13 @@ patch $cni_manifest_ipv6 $cni_ipv6_diff
 
 kubectl kustomize /tmp/prometheus/grafana > /tmp/grafana-deployment.yaml.tmp
 mv -f /tmp/grafana-deployment.yaml.tmp /tmp/prometheus/grafana/grafana-deployment.yaml
+
+for image in $(/tmp/fetch-images.sh /tmp); do
+  echo "${image}"
+done
+echo "printed all image names"
+
+sleep 7200
 
 if [[ ${slim} == false ]]; then
     # Pre pull all images from the manifests
