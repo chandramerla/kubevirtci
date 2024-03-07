@@ -181,7 +181,6 @@ if [[ $version != $packages_version ]]; then
 fi
 
 kubeadm config images pull --kubernetes-version ${version}
-sleep 7200
 
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
 # dnf install clang
