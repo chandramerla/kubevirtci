@@ -181,6 +181,7 @@ if [[ $version != $packages_version ]]; then
 fi
 
 kubeadm config images pull --kubernetes-version ${version}
+sleep 7200
 
 dnf install -y centos-release-nfv-openvswitch
 dnf install -y openvswitch2.16
