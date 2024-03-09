@@ -50,17 +50,32 @@ func NewProvisionCommand() *cobra.Command {
 }
 
 func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
+	var base string
 	packagePath := args[0]
-	versionBytes, err := ioutil.ReadFile(filepath.Join(packagePath, "version"))
+	versionBytes, err := os.ReadFile(filepath.Join(packagePath, "version"))
 	if err != nil {
 		return err
 	}
 	version := strings.TrimSpace(string(versionBytes))
-	baseBytes, err := ioutil.ReadFile(filepath.Join(packagePath, "base"))
+	baseBytes, err := os.ReadFile(filepath.Join(packagePath, "base"))
 	if err != nil {
 		return err
 	}
-	base := fmt.Sprintf("quay.io/jitensin/%s", strings.TrimSpace(string(baseBytes)))
+	phases, err := cmd.Flags().GetString("phases")
+	if err != nil {
+		return err
+	}
+
+	if strings.Contains(phases, "linux") {
+		base = fmt.Sprintf("quay.io/jitensin/%s", strings.TrimSpace(string(baseBytes)))
+	} else {
+		k8sPath := fmt.Sprintf("%s/../", packagePath)
+		baseImageBytes, err := os.ReadFile(filepath.Join(k8sPath, "base-image"))
+		if err != nil {
+			return err
+		}
+		base = strings.TrimSpace(string(baseImageBytes))
+	}
 
 	containerSuffix, err := cmd.Flags().GetString("container-suffix")
 	if err != nil {
@@ -74,15 +89,8 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	target := fmt.Sprintf("quay.io/jitensin/k8s-%s", name)
 	scripts := filepath.Join(packagePath)
 
-	phases, err := cmd.Flags().GetString("phases")
-	if err != nil {
-		return err
-	}
-
-	if phases == "k8s" {
-		base += "-dev"
-	} else if phases == "linux" {
-		target = base + "-dev"
+	if phases == "linux" {
+		target = base + "-base"
 	}
 
 	memory, err := cmd.Flags().GetString("memory")
@@ -243,24 +251,33 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		return err
 	}
 
-	logrus.Info("DEBUG - scp scripting")
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/extra-pre-pull-images cloud-user@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
-	if err != nil {
-		return err
+	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
+	if strings.Contains(phases, "linux") {
+		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/provision.sh", envVars)
+		if err != nil {
+			return err
+		}
 	}
-	logrus.Info("DEBUG - scp scripting2")
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/fetch-images.sh cloud-user@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
-	if err != nil {
-		return err
-	}
+	if strings.Contains(phases, "k8s") {
+		// copy provider scripts
+		err = copyDirectory(ctx, cli, node.ID, scripts, "/scripts")
+		if err != nil {
+			return err
+		}
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/extra-pre-pull-images ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/extra-pre-pull-images cloud-user@192.168.66.101:/tmp/extra-pre-pull-images; fi", "copying /scripts/extra-pre-pull-images if existing")
+		if err != nil {
+			return err
+		}
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "if [ -f /scripts/fetch-images.sh ]; then scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/fetch-images.sh cloud-user@192.168.66.101:/tmp/fetch-images.sh; fi", "copying /scripts/fetch-images.sh if existing")
+		if err != nil {
+			return err
+		}
 
-	logrus.Info("DEBUG - scp scripting3")
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key cloud-user@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
 	if err != nil {
 		return err
 	}
 
-	logrus.Info("DEBUG - scp scripting4")
 	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
 	if strings.Contains(phases, "linux") {
 		// Copy manifests to the VM
@@ -270,13 +287,6 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 			return err
 		}
 
-		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/provision.sh", envVars)
-		if err != nil {
-			return err
-		}
-	}
-	if strings.Contains(phases, "k8s") {
-		logrus.Info("DEBUG - k8s provision")
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/k8s_provision.sh", envVars)
 		if err != nil {
 			return err
