@@ -131,8 +131,6 @@ for image in $(/tmp/fetch-images.sh /tmp); do
 done
 echo "printed all image names"
 
-sleep 7200
-
 if [[ ${slim} == false ]]; then
     # Pre pull all images from the manifests
     for image in $(/tmp/fetch-images.sh /tmp); do
