@@ -273,13 +273,12 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 			return err
 		}
 
-	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key cloud-user@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
-	if err != nil {
-		return err
-	}
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key cloud-user@192.168.66.101 'mkdir -p /tmp/ceph /tmp/cnao /tmp/nfs-csi /tmp/nodeports /tmp/prometheus /tmp/whereabouts'", "Create required manifest directories before copy")
+		if err != nil {
+			return err
+		}
 
-	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
-	if strings.Contains(phases, "linux") {
+
 		// Copy manifests to the VM
 		logrus.Info("DEBUG - Copy manifests to the VM")
 		err = _cmd(cli, nodeContainer(prefix, nodeName), "scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i s390x_cloud-user.key -P 22 /scripts/manifests/* cloud-user@192.168.66.101:/tmp", "copying manifests to the VM")
