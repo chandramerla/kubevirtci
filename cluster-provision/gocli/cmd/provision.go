@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alessio/shellescape"
 	"github.com/docker/docker/api/types"
@@ -286,6 +287,9 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		if err != nil {
 			return err
 		}
+
+		logrus.Info("DEBUG - Before sleep and shutdown")
+		time.Sleep(300 * time.Second)
 
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/k8s_provision.sh", envVars)
 		if err != nil {
