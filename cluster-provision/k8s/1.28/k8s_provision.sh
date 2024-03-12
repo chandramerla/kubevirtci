@@ -306,6 +306,7 @@ kubeadm_raw_ipv6=/tmp/kubeadm_ipv6.conf
 kubeadm_manifest="/etc/kubernetes/kubeadm.conf"
 kubeadm_manifest_ipv6="/etc/kubernetes/kubeadm_ipv6.conf"
 
+dnf install -y gettext
 envsubst < $kubeadm_raw > $kubeadm_manifest
 envsubst < $kubeadm_raw_ipv6 > $kubeadm_manifest_ipv6
 
