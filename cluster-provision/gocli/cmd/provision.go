@@ -288,9 +288,6 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 			return err
 		}
 
-		logrus.Info("DEBUG - Before sleep and shutdown")
-		time.Sleep(300 * time.Second)
-
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/k8s_provision.sh", envVars)
 		if err != nil {
 			return err
