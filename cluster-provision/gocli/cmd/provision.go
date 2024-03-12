@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/alessio/shellescape"
 	"github.com/docker/docker/api/types"
