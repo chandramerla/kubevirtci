@@ -19,7 +19,7 @@
          # upgraded to use calico-ipam.
          - name: upgrade-ipam
 -          image: docker.io/calico/cni:v3.18.0
-+          image: quay.io/calico/cni:v3.18.0
++          image: quay.io/calico/cni:v3.25.0
            command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
            envFrom:
            - configMapRef:
@@ -28,7 +28,7 @@
          # and CNI network config file on each node.
          - name: install-cni
 -          image: docker.io/calico/cni:v3.18.0
-+          image: quay.io/calico/cni:v3.18.0
++          image: quay.io/calico/cni:v3.25.0
            command: ["/opt/cni/bin/install"]
            envFrom:
            - configMapRef:
@@ -37,7 +37,7 @@
          # to communicate with Felix over the Policy Sync API.
          - name: flexvol-driver
 -          image: docker.io/calico/pod2daemon-flexvol:v3.18.0
-+          image: quay.io/calico/pod2daemon-flexvol:v3.18.0
++          image: quay.io/calico/pod2daemon-flexvol:v3.25.0
            volumeMounts:
            - name: flexvol-driver-host
              mountPath: /host/driver
@@ -46,7 +46,7 @@
          # host.
          - name: calico-node
 -          image: docker.io/calico/node:v3.18.0
-+          image: quay.io/calico/node:v3.18.0
++          image: quay.io/calico/node:v3.25.0
            envFrom:
            - configMapRef:
                # Allow KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT to be overridden for eBPF mode.
@@ -94,7 +94,7 @@
        containers:
          - name: calico-kube-controllers
 -          image: docker.io/calico/kube-controllers:v3.18.0
-+          image: quay.io/calico/kube-controllers:v3.18.0
++          image: quay.io/calico/kube-controllers:v3.25.0
            env:
              # Choose which controllers to run.
              - name: ENABLED_CONTROLLERS
