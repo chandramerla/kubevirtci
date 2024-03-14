@@ -152,7 +152,7 @@ cni_ipv6_diff="/tmp/cni_ipv6.diff"
 
 cp /tmp/cni.do-not-change.yaml $cni_manifest
 mv /tmp/cni.do-not-change.yaml $cni_manifest_ipv6
-patch $cni_manifest $cni_diff
+#patch $cni_manifest $cni_diff
 patch $cni_manifest_ipv6 $cni_ipv6_diff
 
 cp /tmp/local-volume.yaml /provision/local-volume.yaml
