@@ -62,7 +62,12 @@ data:
           "nodename": "__KUBERNETES_NODE_NAME__",
           "mtu": __CNI_MTU__,
           "ipam": {
-              "type": "calico-ipam"
+              "type": "calico-ipam",
+              "assign_ipv4": "false",
+              "assign_ipv6": "true"
+          },
+          "container_settings": {
+              "allow_ip_forwarding": true
           },
           "policy": {
               "type": "k8s"
@@ -4440,7 +4445,7 @@ spec:
         # It can be deleted if this is a fresh installation, or if you have already
         # upgraded to use calico-ipam.
         - name: upgrade-ipam
-          image: docker.io/calico/cni:v3.25.2
+          image: quay.io/calico/cni:v3.25.2-s390x
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
           envFrom:
@@ -4468,7 +4473,7 @@ spec:
         # This container installs the CNI binaries
         # and CNI network config file on each node.
         - name: install-cni
-          image: docker.io/calico/cni:v3.25.2
+          image: quay.io/calico/cni:v3.25.2-s390x
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/install"]
           envFrom:
@@ -4511,7 +4516,7 @@ spec:
         # i.e. bpf at /sys/fs/bpf and cgroup2 at /run/calico/cgroup. Calico-node initialisation is executed
         # in best effort fashion, i.e. no failure for errors, to not disrupt pod creation in iptable mode.
         - name: "mount-bpffs"
-          image: docker.io/calico/node:v3.25.2
+          image: quay.io/calico/node:v3.25.2-s390x
           imagePullPolicy: IfNotPresent
           command: ["calico-node", "-init", "-best-effort"]
           volumeMounts:
@@ -4537,7 +4542,7 @@ spec:
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: docker.io/calico/node:v3.25.2
+          image: quay.io/calico/node:v3.25.2-s390x
           imagePullPolicy: IfNotPresent
           envFrom:
           - configMapRef:
@@ -4600,6 +4605,8 @@ spec:
             # no effect. This should fall within `--cluster-cidr`.
             # - name: CALICO_IPV4POOL_CIDR
             #   value: "192.168.0.0/16"
+            - name: IP6
+              value: "autodetect"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -4608,8 +4615,10 @@ spec:
               value: "ACCEPT"
             # Disable IPv6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
-              value: "false"
+              value: "true"
             - name: FELIX_HEALTHENABLED
+              value: "true"
+            - name: CALICO_IPV6POOL_NAT_OUTGOING
               value: "true"
           securityContext:
             privileged: true
@@ -4752,9 +4761,12 @@ spec:
           effect: NoSchedule
       serviceAccountName: calico-kube-controllers
       priorityClassName: system-cluster-critical
+      securityContext:
+        seLinuxOptions:
+          type: spc_t
       containers:
         - name: calico-kube-controllers
-          image: docker.io/calico/kube-controllers:v3.25.2
+          image: quay.io/calico/kube-controllers:v3.25.2-s390x
           imagePullPolicy: IfNotPresent
           env:
             # Choose which controllers to run.
