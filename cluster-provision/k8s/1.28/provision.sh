@@ -60,21 +60,21 @@ dnf install -y libseccomp-devel
 \
 
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
-# dnf install clang
-#     dnf install git
-#     dnf install autoconf
-#      dnf install automake
-#     dnf install libtool
-#     git clone https://github.com/openvswitch/ovs.git
-#     cd ovs
-#  git checkout v2.16.0
-#  ./boot.sh
-#  ./configure
-#  make
-#  make install
-#  export PATH=$PATH:/usr/local/share/openvswitch/scripts
-#  ovs-ctl start
-#  ovs-ctl status
+dnf install -y clang
+dnf install -y git
+dnf install -y autoconf
+dnf install -y automake
+dnf install -y libtool
+git clone https://github.com/openvswitch/ovs.git
+cd ovs
+git checkout v2.16.0
+./boot.sh
+./configure
+make
+make install
+export PATH=$PATH:/usr/local/share/openvswitch/scripts
+ovs-ctl start
+ovs-ctl status
 # dnf install -y centos-release-nfv-openvswitch
 # dnf install -y openvswitch2.16
 
