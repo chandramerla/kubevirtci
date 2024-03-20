@@ -310,6 +310,11 @@ dnf install -y gettext
 envsubst < $kubeadm_raw > $kubeadm_manifest
 envsubst < $kubeadm_raw_ipv6 > $kubeadm_manifest_ipv6
 
+ip address show dev eth0
+ip address show dev eth0 | grep global
+ip address show dev eth0 | grep global | grep inet6
+
+echo "before until"
 until ip address show dev eth0 | grep global | grep inet6; do sleep 1; done
 
 # 1.23 has deprecated --experimental-patches /provision/kubeadm-patches/, we now mention the patch directory in kubeadm.conf
