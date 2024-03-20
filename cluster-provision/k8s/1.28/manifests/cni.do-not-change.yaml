@@ -63,7 +63,7 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "calico-ipam",
-              "assign_ipv4": "false",
+              "assign_ipv4": "true",
               "assign_ipv6": "true"
           },
           "container_settings": {
