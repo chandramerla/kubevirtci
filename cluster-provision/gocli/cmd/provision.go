@@ -66,17 +66,16 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		return err
 	}
 
-	// Commented out temporarily as I wanted to just run k8s phase, reusing the image I've built with custom name
-	// if strings.Contains(phases, "linux") {
-		base = fmt.Sprintf("quay.io/jitensin/%s-base", strings.TrimSpace(string(baseBytes)))
-	// } else {
-	// 	k8sPath := fmt.Sprintf("%s/../", packagePath)
-	// 	baseImageBytes, err := os.ReadFile(filepath.Join(k8sPath, "base-image"))
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	base = strings.TrimSpace(string(baseImageBytes))
-	// }
+	if strings.Contains(phases, "linux") {
+		base = fmt.Sprintf("quay.io/jitensin/%s", strings.TrimSpace(string(baseBytes)))
+	} else {
+		k8sPath := fmt.Sprintf("%s/../", packagePath)
+		baseImageBytes, err := os.ReadFile(filepath.Join(k8sPath, "base-image"))
+		if err != nil {
+			return err
+		}
+		base = strings.TrimSpace(string(baseImageBytes))
+	}
 
 	containerSuffix, err := cmd.Flags().GetString("container-suffix")
 	if err != nil {
