@@ -310,6 +310,7 @@ dnf install -y gettext
 envsubst < $kubeadm_raw > $kubeadm_manifest
 envsubst < $kubeadm_raw_ipv6 > $kubeadm_manifest_ipv6
 
+sleep 30
 ip address show dev eth0
 ip address show dev eth0 | grep global
 ip address show dev eth0 | grep global | grep inet6
