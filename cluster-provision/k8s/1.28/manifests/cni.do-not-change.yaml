@@ -63,7 +63,8 @@ data:
           "mtu": __CNI_MTU__,
           "ipam": {
               "type": "calico-ipam",
-              "assign_ipv4": "false"
+              "assign_ipv4": "false",
+              "assign_ipv6": "true"
           },
           "container_settings": {
               "allow_ip_forwarding": true
@@ -4604,6 +4605,8 @@ spec:
             # no effect. This should fall within `--cluster-cidr`.
             # - name: CALICO_IPV4POOL_CIDR
             #   value: "192.168.0.0/16"
+            - name: IP6
+              value: "autodetect"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -4612,8 +4615,10 @@ spec:
               value: "ACCEPT"
             # Disable IPv6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
-              value: "false"
+              value: "true"
             - name: FELIX_HEALTHENABLED
+              value: "true"
+            - name: CALICO_IPV6POOL_NAT_OUTGOING
               value: "true"
           securityContext:
             privileged: true
