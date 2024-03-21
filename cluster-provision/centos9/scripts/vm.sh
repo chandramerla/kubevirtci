@@ -188,9 +188,19 @@ echo "--DEBUG--"
 qemu_log="qemu_log.txt"
 qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 32767M -smp 16 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid) ${QEMU_ARGS} >"$qemu_log" 2>&1
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)
-
+qemu-system-s390x \
+    -enable-kvm \
+    -drive format=qcow2,file=${next},if=virtio,cache=unsafe \
+    -machine s390-ccw-virtio \
+    -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
+    -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
+    -device virtio-rng \
+    -vnc :${n} \
+    -cpu host \
+    -m 32767M \
+    -smp 16 \
+    -serial pty \
+    -uuid $(cat /proc/sys/kernel/random/uuid) \
+    ${QEMU_ARGS} \
+    >"$qemu_log" 2>&1
 cat "qemu_log.txt"
-#DEBUG
-echo "Before sleep after qemu"
-sleep 60
-echo "Before sleep after qemu"
