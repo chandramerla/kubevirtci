@@ -190,7 +190,7 @@ qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=u
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)
 qemu-system-s390x \
     -enable-kvm \
-    -drive format=qcow2,file=${next},if=virtio,cache=unsafe \
+    -drive format=qcow2,file=${next},if=virtio,cache=unsafe ${block_dev_arg} \
     -machine s390-ccw-virtio \
     -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
