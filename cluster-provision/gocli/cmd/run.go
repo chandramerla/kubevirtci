@@ -629,13 +629,14 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 			return fmt.Errorf("checking for matching provision script for node %s failed", nodeName)
 		}
 
-		for _, s := range soundcardPCIIDs {
-			// move the VM sound cards to a vfio-pci driver to prepare for assignment
-			err = prepareDeviceForAssignment(cli, nodeContainer(prefix, nodeName), s, "")
-			if err != nil {
-				return err
-			}
-		}
+		// sound cards are not supported for s390x
+		// for _, s := range soundcardPCIIDs {
+		// 	// move the VM sound cards to a vfio-pci driver to prepare for assignment
+		// 	err = prepareDeviceForAssignment(cli, nodeContainer(prefix, nodeName), s, "")
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// }
 
 		if singleStack {
 			ok, err := docker.Exec(cli, nodeContainer(prefix, nodeName),
