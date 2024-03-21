@@ -102,7 +102,7 @@ func NewRunCommand() *cobra.Command {
 	run.Flags().Bool("enable-grafana", false, "deploys Grafana")
 	run.Flags().String("docker-proxy", "", "sets network proxy for docker daemon")
 	run.Flags().String("container-registry", "quay.io", "the registry to pull cluster container from")
-	run.Flags().String("container-org", "kubevirtci", "the organization at the registry to pull the container from")
+	run.Flags().String("container-org", "jitensin", "the organization at the registry to pull the container from")
 	run.Flags().String("container-suffix", "", "Override container suffix stored at the cli binary")
 	run.Flags().String("gpu", "", "pci address of a GPU to assign to a node")
 	run.Flags().StringArrayVar(&nvmeDisks, "nvme", []string{}, "size of the emulate NVMe disk to pass to the node")
