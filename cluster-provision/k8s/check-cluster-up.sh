@@ -37,7 +37,7 @@ export KUBEVIRTCI_GOCLI_CONTAINER=quay.io/jitensin/gocli:latest
     export KUBEVIRT_DEPLOY_GRAFANA=true
     export KUBEVIRT_DEPLOY_CDI=true
 
-    trap cleanup EXIT ERR SIGINT SIGTERM SIGQUIT
+    #trap cleanup EXIT ERR SIGINT SIGTERM SIGQUIT
     bash -x ./cluster-up/up.sh
     timeout 210s bash -c "until ${ksh} wait --for=condition=Ready pod --timeout=30s --all -l app!=whereabouts; do sleep 1; done"
     timeout 210s bash -c "until ${ksh} wait --for=condition=Ready pod --timeout=30s -n kube-system --all -l app!=whereabouts; do sleep 1; done"
