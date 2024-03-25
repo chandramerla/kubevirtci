@@ -211,9 +211,9 @@ sysctl --system
 
 systemctl restart NetworkManager
 
-nmcli connection modify "System eth0" \
-   ipv6.method auto
-nmcli connection up "System eth0"
+# nmcli connection modify "System eth0" \
+#    ipv6.method auto
+# nmcli connection up "System eth0"
 
 sleep 300
 
