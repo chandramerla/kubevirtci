@@ -60,13 +60,13 @@ dnf install -y libseccomp-devel
 
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
 dnf install -y @'Development Tools' rpm-build dnf-plugins-core
+git clone https://github.com/openvswitch/ovs.git
+cd ovs
+git checkout v2.16.0
 sed -e 's/@VERSION@/2.16/' rhel/openvswitch-fedora.spec.in \
  > /tmp/ovs.spec
 dnf -y builddep /tmp/ovs.spec
 rm -f /tmp/ovs.spec
-git clone https://github.com/openvswitch/ovs.git
-cd ovs
-git checkout v2.16.0
 ./boot.sh
 ./configure
 make rpm-fedora
