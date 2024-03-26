@@ -59,6 +59,7 @@ dnf install -y container-selinux
 dnf install -y libseccomp-devel
 \
 
+sleep 3600
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
 dnf install -y clang
 dnf install -y git
