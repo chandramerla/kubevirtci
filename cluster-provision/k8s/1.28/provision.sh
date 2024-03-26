@@ -57,9 +57,7 @@ export PATH="$ISTIO_BIN_DIR:$PATH"
 dnf install -y container-selinux
 
 dnf install -y libseccomp-devel
-\
 
-sleep 3600
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
 dnf install -y @'Development Tools' rpm-build dnf-plugins-core
 sed -e 's/@VERSION@/2.16/' rhel/openvswitch-fedora.spec.in \
