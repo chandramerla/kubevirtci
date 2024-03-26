@@ -782,7 +782,7 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 func waitForVMToBeUp(prefix string, nodeName string) error {
 	var err error
 	// Wait for the VM to be up
-	for x := 0; x < 10; x++ {
+	for x := 0; x < 1000; x++ {
 		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh.sh echo VM is up", "waiting for node to come up")
 		if err == nil {
 			break
