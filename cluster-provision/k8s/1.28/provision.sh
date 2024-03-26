@@ -61,21 +61,35 @@ dnf install -y libseccomp-devel
 
 sleep 3600
 # openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
-dnf install -y clang
-dnf install -y git
-dnf install -y autoconf
-dnf install -y automake
-dnf install -y libtool
+dnf install -y @'Development Tools' rpm-build dnf-plugins-core
+sed -e 's/@VERSION@/2.16/' rhel/openvswitch-fedora.spec.in \
+ > /tmp/ovs.spec
+dnf -y builddep /tmp/ovs.spec
+rm -f /tmp/ovs.spec
 git clone https://github.com/openvswitch/ovs.git
 cd ovs
 git checkout v2.16.0
 ./boot.sh
 ./configure
-make
-make install
-export PATH=$PATH:/usr/local/share/openvswitch/scripts
-ovs-ctl start
-ovs-ctl status
+make rpm-fedora
+dnf install -y rpm/rpmbuild/RPMS/*/*.rpm
+systemctl status openvswitch
+
+# dnf install -y clang
+# dnf install -y git
+# dnf install -y autoconf
+# dnf install -y automake
+# dnf install -y libtool
+# git clone https://github.com/openvswitch/ovs.git
+# cd ovs
+# git checkout v2.16.0
+# ./boot.sh
+# ./configure
+# make
+# make install
+# export PATH=$PATH:/usr/local/share/openvswitch/scripts
+# ovs-ctl start
+# ovs-ctl status
 # dnf install -y centos-release-nfv-openvswitch
 # dnf install -y openvswitch2.16
 
