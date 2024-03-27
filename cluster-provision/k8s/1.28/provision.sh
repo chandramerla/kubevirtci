@@ -63,6 +63,12 @@ dnf install -y @'Development Tools' rpm-build dnf-plugins-core
 git clone https://github.com/openvswitch/ovs.git
 cd ovs
 git checkout v2.16.0
+dnf install -y clang
+dnf install -y git
+dnf install -y autoconf
+dnf install -y automake
+dnf install -y libtool
+sleep 7200
 dnf install -y https://kojihub.stream.centos.org/kojifiles/vol/koji02/packages/unbound/1.19.0/8.el10/s390x/unbound-libs-1.19.0-8.el10.s390x.rpm
 dnf install -y https://kojihub.stream.centos.org/kojifiles/vol/koji02/packages/unbound/1.19.0/8.el10/s390x/unbound-devel-1.19.0-8.el10.s390x.rpm
 python -m pip install git+https://github.com/sphinx-doc/sphinx
