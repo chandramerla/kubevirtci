@@ -63,8 +63,8 @@ dnf install -y @'Development Tools' rpm-build dnf-plugins-core
 git clone https://github.com/openvswitch/ovs.git
 cd ovs
 git checkout v2.16.0
-pip install git+https://github.com/sphinx-doc/sphinx
 dnf install -y https://kojihub.stream.centos.org/kojifiles/vol/koji02/packages/unbound/1.19.0/8.el10/s390x/unbound-devel-1.19.0-8.el10.s390x.rpm
+python -m pip install git+https://github.com/sphinx-doc/sphinx
 # git clone https://github.com/NLnetLabs/unbound.git
 # # Update the package repositories
 # sudo yum update -y
