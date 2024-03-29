@@ -92,8 +92,8 @@ dnf install -y libseccomp-devel
 # sudo dnf install -y selinux-policy-devel
 # python -m pip install git+https://github.com/sphinx-doc/sphinx
 # cd ovs
-# sed -i -e 's/@VERSION@/2.16/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec.in
-# sed -e 's/@VERSION@/2.16/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec.in \
+# sed -i -e 's/@VERSION@/2.16.0/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec
+# sed -e 's/@VERSION@/2.16.0/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec.in \
 #  > /tmp/ovs.spec
 # sudo dnf -y builddep /tmp/ovs.spec
 # rm -f /tmp/ovs.spec
