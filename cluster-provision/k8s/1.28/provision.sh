@@ -58,46 +58,50 @@ dnf install -y container-selinux
 
 dnf install -y libseccomp-devel
 
-# openvswitch2 need to be built following instructions that worked for Vamsi (given below). 
-dnf install -y @'Development Tools' rpm-build dnf-plugins-core
-git clone https://github.com/openvswitch/ovs.git
-cd ovs
-git checkout v2.16.0
-dnf install -y clang
-dnf install -y git
-dnf install -y autoconf
-dnf install -y automake
-dnf install -y libtool
-sleep 7200
-dnf install -y https://kojihub.stream.centos.org/kojifiles/vol/koji02/packages/unbound/1.19.0/8.el10/s390x/unbound-libs-1.19.0-8.el10.s390x.rpm
-dnf install -y https://kojihub.stream.centos.org/kojifiles/vol/koji02/packages/unbound/1.19.0/8.el10/s390x/unbound-devel-1.19.0-8.el10.s390x.rpm
-python -m pip install git+https://github.com/sphinx-doc/sphinx
-# git clone https://github.com/NLnetLabs/unbound.git
-# # Update the package repositories
-# sudo yum update -y
-# # Install the C toolchain
-# sudo yum install -y gcc
-# # Install OpenSSL and OpenSSL Development Files
-# sudo yum install -y openssl openssl-devel
-# # Install Flex and Bison (for building from repository source)
-# sudo yum install -y flex bison
-# # Install Libexpat and Expact Development Files
-# sudo yum install -y expat expat-devel
-# # Install Libevent and Libevent Development Files
-# sudo yum install -y libevent libevent-devel
-# # Install LDNS and LDNS Development Files
-# sudo yum install -y ldns ldns-devel
-# ./configure && make && make install
+# openvswitch2 need to be built following instructions below.
+# but it is failing as below as sed seem to not replace file contents:
+    # cp openvswitch-2.16.0.tar.gz /home/cloud-user/ovs/rpm/rpmbuild/SOURCES
+    # rpmbuild --without check \
+    #                 -D "_topdir /home/cloud-user/ovs/rpm/rpmbuild" \
+    #                 -ba ./rhel/openvswitch-fedora.spec
+    # warning: Macro expanded in comment on line 25: %define kernel 2.6.40.4-5.fc15.x86_64
 
-sed -e 's/@VERSION@/2.16/' rhel/openvswitch-fedora.spec.in \
- > /tmp/ovs.spec
-dnf -y builddep /tmp/ovs.spec
-rm -f /tmp/ovs.spec
-./boot.sh
-./configure
-make rpm-fedora
-dnf install -y rpm/rpmbuild/RPMS/*/*.rpm
-systemctl status openvswitch
+    # setting SOURCE_DATE_EPOCH=1294790400
+    # error: Failed build dependencies:
+    #   /usr/bin/sphinx-build-3 is needed by openvswitch-2.16.0-1.el9.s390x
+    # make: *** [Makefile:7216: rpm-fedora] Error 11
+    # Last metadata expiration check: 0:19:53 ago on Fri 29 Mar 2024 03:03:15 AM EDT.
+    # Can not load RPM file: rpm/rpmbuild/RPMS/*/*.rpm.
+    # Could not open: rpm/rpmbuild/RPMS/*/*.rpm 
+# dnf install -y @'Development Tools' rpm-build dnf-plugins-core
+# git clone https://github.com/openvswitch/ovs.git
+# cd ovs
+# git checkout v2.16.0
+# dnf install -y clang
+# dnf install -y git
+# dnf install -y autoconf
+# dnf install -y automake
+# dnf install -y libtool
+# sleep 7200
+# sudo dnf install -y unbound-1.16.2-3.el9.s390x
+# sudo dnf install -y https://kojihub.stream.centos.org/kojifiles/packages/unbound/1.16.2/3.el9/s390x/unbound-devel-1.16.2-3.el9.s390x.rpm
+# sudo dnf install -y python3-pip
+# sudo dnf install -y desktop-file-utils
+# sudo dnf install -y groff
+# sudo dnf install -y libcap-ng-devel
+# sudo dnf install -y selinux-policy-devel
+# python -m pip install git+https://github.com/sphinx-doc/sphinx
+# cd ovs
+# sed -i -e 's/@VERSION@/2.16/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec.in
+# sed -e 's/@VERSION@/2.16/' -e '/BuildRequires: \/usr\/bin\/sphinx-build-3/s/^/#/' rhel/openvswitch-fedora.spec.in \
+#  > /tmp/ovs.spec
+# sudo dnf -y builddep /tmp/ovs.spec
+# rm -f /tmp/ovs.spec
+# sudo ./boot.sh
+# sudo ./configure
+# sudo make rpm-fedora
+# sudo dnf install -y rpm/rpmbuild/RPMS/*/*.rpm
+# sudo systemctl status openvswitch
 
 # dnf install -y clang
 # dnf install -y git
@@ -116,5 +120,7 @@ systemctl status openvswitch
 # ovs-ctl status
 # dnf install -y centos-release-nfv-openvswitch
 # dnf install -y openvswitch2.16
+
+dnf install -y https://kojipkgs.fedoraproject.org//packages/openvswitch/2.16.0/2.fc36/s390x/openvswitch-2.16.0-2.fc36.s390x.rpm
 
 dnf install -y NetworkManager NetworkManager-ovs NetworkManager-config-server
