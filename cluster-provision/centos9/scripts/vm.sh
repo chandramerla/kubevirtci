@@ -181,7 +181,7 @@ qemu-system-s390x \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
     -vnc :${n} \
-    -cpu host,accel=kvm \
+    -cpu host \
     -m 32767M \
     -smp 16 \
     -serial pty \

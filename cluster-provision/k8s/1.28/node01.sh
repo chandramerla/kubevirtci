@@ -4,12 +4,12 @@ set -ex
 
 kubeadm_conf="/etc/kubernetes/kubeadm.conf"
 cni_manifest="/provision/cni.yaml"
-if [ -f /home/vagrant/single_stack ]; then
+if [ -f /home/cloud-user/single_stack ]; then
     kubeadm_conf="/etc/kubernetes/kubeadm_ipv6.conf"
     cni_manifest="/provision/cni_ipv6.yaml"
 fi
 
-if [ -f /home/vagrant/enable_audit ]; then
+if [ -f /home/cloud-user/enable_audit ]; then
     apiVer=$(head -1 /etc/kubernetes/audit/adv-audit.yaml)
     echo $apiVer > /etc/kubernetes/audit/adv-audit.yaml
 

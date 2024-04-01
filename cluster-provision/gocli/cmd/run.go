@@ -640,7 +640,7 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 
 		if singleStack {
 			ok, err := docker.Exec(cli, nodeContainer(prefix, nodeName),
-				[]string{"/bin/bash", "-c", "ssh.sh touch /home/vagrant/single_stack"}, os.Stdout)
+				[]string{"/bin/bash", "-c", "ssh.sh touch /home/cloud-user/single_stack"}, os.Stdout)
 			if err != nil {
 				return err
 			}
@@ -652,7 +652,7 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 
 		if enableAudit {
 			ok, err := docker.Exec(cli, nodeContainer(prefix, nodeName),
-				[]string{"/bin/bash", "-c", "ssh.sh touch /home/vagrant/enable_audit"}, os.Stdout)
+				[]string{"/bin/bash", "-c", "ssh.sh touch /home/cloud-user/enable_audit"}, os.Stdout)
 			if err != nil {
 				return err
 			}
