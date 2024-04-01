@@ -212,10 +212,9 @@ sysctl --system
 systemctl restart NetworkManager
 
 # nmcli connection modify "System eth0" \
-#    ipv6.method auto
+#    ipv6.method auto \
+#    ipv6.addr-gen-mode eui64
 # nmcli connection up "System eth0"
-
-sleep 300
 
 kubeadmn_patches_path="/provision/kubeadm-patches"
 mkdir -p $kubeadmn_patches_path
@@ -307,7 +306,7 @@ kubeadm_raw_ipv6=/tmp/kubeadm_ipv6.conf
 kubeadm_manifest="/etc/kubernetes/kubeadm.conf"
 kubeadm_manifest_ipv6="/etc/kubernetes/kubeadm_ipv6.conf"
 
-dnf install -y gettext
+dnf install -y gettext #As envsubst command is not found for s390x
 envsubst < $kubeadm_raw > $kubeadm_manifest
 envsubst < $kubeadm_raw_ipv6 > $kubeadm_manifest_ipv6
 

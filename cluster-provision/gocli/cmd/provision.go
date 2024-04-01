@@ -193,8 +193,8 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 			fmt.Sprintf("NODE_NUM=%s", nodeNum),
 		},
 		Volumes: map[string]struct{}{
-			"/var/run/disk2":     {},
-			"/var/lib/registry2": {},
+			"/var/run/disk":     {},
+			"/var/lib/registry": {},
 		},
 		Cmd: []string{"/bin/bash", "-c", fmt.Sprintf("/vm.sh --memory %s --cpu %s %s", memory, strconv.Itoa(int(cpu)), qemuArgs)},
 	}, &container.HostConfig{
@@ -235,19 +235,11 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		return err
 	}
 
-	// Wait for ssh.sh script to exist
-	//err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do sleep 1; done", "checking for ssh.sh script")
-	//if err != nil {
-	//	return err
-	//}
-
 	// Wait for the VM to be up
 	logrus.Info("Wait for the VM to be up")
-	//time.Sleep(300 * time.Second)
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh.sh echo VM is up", "waiting for node to come up")
 	if err != nil {
 		logrus.Info("Error :Wait for the VM to be up")
-		//time.Sleep(300 * time.Second)
 		return err
 	}
 
@@ -277,7 +269,6 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		if err != nil {
 			return err
 		}
-
 
 		// Copy manifests to the VM
 		logrus.Info("DEBUG - Copy manifests to the VM")

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -ex
 
 PROVISION=false
 MEMORY=3096M
@@ -47,20 +47,11 @@ n="$(printf "%02d" $(( 10#${NODE_NUM} )))"
 cat >/usr/local/bin/ssh.sh <<EOL
 #!/bin/bash
 set -ex
-dockerize -wait tcp://192.168.66.1${n}:22 -timeout 1800s &>/dev/null
+dockerize -wait tcp://192.168.66.1${n}:22 -timeout 300s &>/dev/null
 ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.1${n} -i s390x_cloud-user.key -p 22 -q \$@
 EOL
 chmod u+x /usr/local/bin/ssh.sh
-echo "-------------------"
-echo "-------------------"
-ls /usr/local/bin/ssh.sh
-pwd
-echo "-------------------"
-echo "-------------------"
 echo "done" > /ssh_ready
-cat /usr/local/bin/ssh.sh
-ls /ssh_ready
-cat /ssh_ready
 
 
 sleep 0.1
@@ -76,12 +67,6 @@ fi
 
 ############## test ###########
 ip ad
-
-#sh /usr/local/bin/ssh.sh
-
-# Route SSH
-iptables -h
-dnf install iptables -y
 
 iptables -t nat -A POSTROUTING ! -s 192.168.66.0/16 --out-interface br0 -j MASQUERADE
 if [ "$ROOTLESS" != "1" ]; then
@@ -196,7 +181,7 @@ qemu-system-s390x \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
     -vnc :${n} \
-    -cpu host \
+    -cpu host,accel=kvm \
     -m 32767M \
     -smp 16 \
     -serial pty \

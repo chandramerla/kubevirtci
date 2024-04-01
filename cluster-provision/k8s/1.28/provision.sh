@@ -59,20 +59,6 @@ dnf install -y container-selinux
 dnf install -y libseccomp-devel
 
 # openvswitch2 need to be built following instructions below.
-# but it is failing as below as sed seem to not replace file contents:
-    # cp openvswitch-2.16.0.tar.gz /home/cloud-user/ovs/rpm/rpmbuild/SOURCES
-    # rpmbuild --without check \
-    #                 -D "_topdir /home/cloud-user/ovs/rpm/rpmbuild" \
-    #                 -ba ./rhel/openvswitch-fedora.spec
-    # warning: Macro expanded in comment on line 25: %define kernel 2.6.40.4-5.fc15.x86_64
-
-    # setting SOURCE_DATE_EPOCH=1294790400
-    # error: Failed build dependencies:
-    #   /usr/bin/sphinx-build-3 is needed by openvswitch-2.16.0-1.el9.s390x
-    # make: *** [Makefile:7216: rpm-fedora] Error 11
-    # Last metadata expiration check: 0:19:53 ago on Fri 29 Mar 2024 03:03:15 AM EDT.
-    # Can not load RPM file: rpm/rpmbuild/RPMS/*/*.rpm.
-    # Could not open: rpm/rpmbuild/RPMS/*/*.rpm 
 # dnf install -y @'Development Tools' rpm-build dnf-plugins-core
 # git clone https://github.com/openvswitch/ovs.git
 # cd ovs
