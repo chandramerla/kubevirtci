@@ -165,9 +165,6 @@ for size in ${USB_SIZES[@]}; do
   qemu-img create -f raw $disk $size
   let "disk_num+=1"
 done
-echo "--DEBUG--"
-cat ${QEMU_ARGS}
-echo "--DEBUG--"
 
 
 qemu_log="qemu_log.txt"
