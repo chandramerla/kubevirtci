@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/signal"
@@ -240,6 +242,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh.sh echo VM is up", "waiting for node to come up")
 	if err != nil {
 		logrus.Info("Error :Wait for the VM to be up")
+		fmt.Println("Error:", err.Error())
 		return err
 	}
 
@@ -368,9 +371,15 @@ func _cmd(cli *client.Client, container string, cmd string, description string) 
 	logrus.Info(description)
 	success, err := docker.Exec(cli, container, []string{"/bin/bash", "-c", cmd}, os.Stdout)
 	if err != nil {
-		return fmt.Errorf("%s failed: %v", description, err)
+		return fmt.Errorf("%s failed: Error is: %v", description, err)
 	} else if !success {
-		return fmt.Errorf("%s failed", cmd)
+		var buf bytes.Buffer
+		// Copy the contents of os.Stdout to the buffer
+		_, err := io.Copy(&buf, os.Stdout)
+		if err != nil {
+			fmt.Println("Error copying:", err)
+		}
+		return fmt.Errorf("%s failed. Stdout is : %s", cmd, buf.String())
 	}
 	return nil
 }
