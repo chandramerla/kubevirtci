@@ -109,6 +109,6 @@ dnf install -y libseccomp-devel
 
 dnf install -y https://kojipkgs.fedoraproject.org//packages/openvswitch/2.16.0/2.fc36/s390x/openvswitch-2.16.0-2.fc36.s390x.rpm
 
-sleep 600
+systemctl enable openvswitch
 
 dnf install -y NetworkManager NetworkManager-ovs NetworkManager-config-server
