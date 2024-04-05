@@ -88,6 +88,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		name = fmt.Sprintf("%s-%s", name, containerSuffix)
 	}
 	prefix := fmt.Sprintf("k8s-%s-provision", name)
+	//TODO: Change it back to kubevirt org
 	target := fmt.Sprintf("quay.io/jitensin/k8s-%s", name)
 	scripts := filepath.Join(packagePath)
 

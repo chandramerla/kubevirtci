@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -ex
-
+echo "before starting provisioning"
+date
 KUBEVIRTCI_SHARED_DIR=/var/lib/kubevirtci
 mkdir -p $KUBEVIRTCI_SHARED_DIR
 export ISTIO_VERSION=1.15.0
@@ -14,13 +15,13 @@ export ISTIO_BIN_DIR="/opt/istio-${ISTIO_VERSION}/bin"
 EOF
 source $KUBEVIRTCI_SHARED_DIR/shared_vars.sh
 
-# Install modules of the initrd kernel
+# Install modules of the initrd kernel. These modules extend the kernel's functionality, providing support for various hardware devices, file systems, network protocols, KVM/virtualization, and other features.
 dnf install -y "kernel-modules-$(uname -r)"
 
 # Resize root partition
 dnf install -y cloud-utils-growpart
-if growpart /dev/vda 1; then
-    resize2fs /dev/vda1
+if growpart /dev/vda 1; then #growpart adjusts the partition size to fill the available space on the disk
+    resize2fs /dev/vda1 #resizes file system to the available space on the partition
 fi
 
 dnf install -y patch
@@ -112,3 +113,5 @@ dnf install -y https://kojipkgs.fedoraproject.org//packages/openvswitch/2.16.0/2
 systemctl enable openvswitch
 
 dnf install -y NetworkManager NetworkManager-ovs NetworkManager-config-server
+echo "after finishing provisioning"
+date

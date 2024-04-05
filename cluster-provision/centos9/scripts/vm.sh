@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# This script is executed in the container during startup to start the qemu VM
 set -ex
 
 PROVISION=false
@@ -28,6 +29,7 @@ while true; do
   esac
 done
 
+#Calculates disk name that can be used when a new disk with particular size is created baseed from existing disk
 function calc_next_disk {
   last="$(ls -t disk* | head -1 | sed -e 's/disk//' -e 's/.qcow2//')"
   last="${last:-00}"
@@ -114,7 +116,7 @@ if [ $disk_size -lt $default_disk_size ]; then
     disk_size=$default_disk_size
 fi
 
-echo "Creating disk \"${next} backed by ${last} with size ${disk_size}\"."
+echo "Creating new disk \"${next} backed by ${last} with size ${disk_size}\"."
 qemu-img create -f qcow2 -o backing_file=${last} -F qcow2 ${next} ${disk_size}
 
 echo ""
@@ -166,6 +168,8 @@ for size in ${USB_SIZES[@]}; do
   let "disk_num+=1"
 done
 
+
+sleep 50000
 
 qemu_log="qemu_log.txt"
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 32767M -smp 16 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid) ${QEMU_ARGS} >"$qemu_log" 2>&1
