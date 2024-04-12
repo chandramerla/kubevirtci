@@ -169,8 +169,6 @@ for size in ${USB_SIZES[@]}; do
 done
 
 
-sleep 50000
-
 #Docs: https://www.qemu.org/docs/master/system/invocation.html
 #     https://www.qemu.org/docs/master/system/target-s390x.html
 qemu_log="qemu_log.txt"
