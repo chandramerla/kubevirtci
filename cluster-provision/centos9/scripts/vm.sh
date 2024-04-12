@@ -176,15 +176,13 @@ sleep 50000
 qemu_log="qemu_log.txt"
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 32767M -smp 16 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid) ${QEMU_ARGS} >"$qemu_log" 2>&1
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)
+   #To use the CPU topology, you currently need to choose the KVM accelerator.
+   #As per https://www.qemu.org/docs/master/system/s390x/bootdevices.html#booting-without-bootindex-parameter -drive if=virtio can't be specified with bootindex
 qemu-system-s390x \
-    #To use the CPU topology, you currently need to choose the KVM accelerator.
-    -accel kvm
     -enable-kvm \
-    #As per https://www.qemu.org/docs/master/system/s390x/bootdevices.html#booting-without-bootindex-parameter -drive if=virtio can't be specified with bootindex
-    -drive format=qcow2,file=${next},if=none,cache=unsafe,id=drive1 ${block_dev_arg} \ 
+    -drive format=qcow2,file=${next},if=none,cache=unsafe,id=drive1 ${block_dev_arg} \
     -device virtio-blk,drive=drive1,bootindex=1 \
-    # -drive format=qcow2,file=${next},if=virtio,cache=unsafe ${block_dev_arg} \
-    -machine s390-ccw-virtio \
+    -machine s390-ccw-virtio,accel=kvm \
     -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
