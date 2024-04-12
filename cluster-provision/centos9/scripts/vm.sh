@@ -185,10 +185,11 @@ qemu-system-s390x \
     -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
+    -vnc :${n} \
     -cpu host \
     -m 32767M \
     -smp 16 \
-    -serial none \
+    -serial pty \
     -uuid $(cat /proc/sys/kernel/random/uuid) \
     ${QEMU_ARGS} \
     >"$qemu_log" 2>&1
