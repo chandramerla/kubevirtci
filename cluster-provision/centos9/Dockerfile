@@ -24,6 +24,7 @@ RUN curl -LO https://github.com/ibm-jitendra/kubevirt_pkgs/raw/main/dockerize-li
 
 RUN echo "Centos9 version $centos_version"
 
+#Doc: https://docs.openstack.org/image-guide/introduction.html
 #ENV CENTOS_URL https://cloud.centos.org/centos/9-stream/s390x/images/CentOS-Stream-GenericCloud-9-latest.s390x.qcow2
 #TODO: We need to fix the version
 #TODO: We need to checksum validation of the downloaded artifact by appending the URL with say SHA256SUM
