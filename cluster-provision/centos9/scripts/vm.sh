@@ -168,6 +168,7 @@ for size in ${USB_SIZES[@]}; do
   let "disk_num+=1"
 done
 
+sleep 100000
 
 #Docs: https://www.qemu.org/docs/master/system/invocation.html
 #     https://www.qemu.org/docs/master/system/target-s390x.html
@@ -184,11 +185,10 @@ qemu-system-s390x \
     -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
-    -vnc :${n} \
     -cpu host \
     -m 32767M \
     -smp 16 \
-    -serial pty \
+    -serial none \
     -uuid $(cat /proc/sys/kernel/random/uuid) \
     ${QEMU_ARGS} \
     >"$qemu_log" 2>&1
