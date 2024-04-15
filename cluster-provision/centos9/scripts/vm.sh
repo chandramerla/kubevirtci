@@ -168,8 +168,6 @@ for size in ${USB_SIZES[@]}; do
   let "disk_num+=1"
 done
 
-sleep 100000
-
 #Docs: https://www.qemu.org/docs/master/system/invocation.html
 #     https://www.qemu.org/docs/master/system/target-s390x.html
 qemu_log="qemu_log.txt"
