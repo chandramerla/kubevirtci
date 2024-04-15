@@ -249,8 +249,20 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 
 	envVars := fmt.Sprintf("version=%s slim=%t", version, slim)
 	if strings.Contains(phases, "linux") {
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.101 -i s390x_cloud-user.key -p 22 sestatus", "checking sestatus before provision.sh")
+		if err != nil {
+			logrus.Info("Error :checking sestatus")
+			fmt.Println("Error:", err.Error())
+			return err
+		}
 		err = performPhase(cli, nodeContainer(prefix, nodeName), "/scripts/provision.sh", envVars)
 		if err != nil {
+			return err
+		}
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.101 -i s390x_cloud-user.key -p 22 sestatus", "checking sestatus after provision.sh")
+		if err != nil {
+			logrus.Info("Error :checking sestatus")
+			fmt.Println("Error:", err.Error())
 			return err
 		}
 	}

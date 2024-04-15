@@ -55,9 +55,21 @@ export PATH="$ISTIO_BIN_DIR:$PATH"
   chmod +x "$ISTIO_BIN_DIR/istioctl"
 )
 
+echo "before container-selinux"
+
+sestatus
+
 dnf install -y container-selinux
 
+echo "after container-selinux"
+
+sestatus
+
 dnf install -y libseccomp-devel
+
+echo "after libseccomp-devel"
+
+sestatus
 
 # openvswitch2 need to be built following instructions below.
 # dnf install -y @'Development Tools' rpm-build dnf-plugins-core
