@@ -255,6 +255,13 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		}
 	}
 	if strings.Contains(phases, "k8s") {
+
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.101 -i s390x_cloud-user.key -p 22 sestatus", "checking sestatus")
+		if err != nil {
+			logrus.Info("Error :checking sestatus")
+			fmt.Println("Error:", err.Error())
+			return err
+		}
 		// copy provider scripts
 		err = copyDirectory(ctx, cli, node.ID, scripts, "/scripts")
 		if err != nil {
