@@ -304,6 +304,12 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		if err != nil {
 			return err
 		}
+		err = _cmd(cli, nodeContainer(prefix, nodeName), "ssh -vvv -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no cloud-user@192.168.66.101 -i s390x_cloud-user.key -p 22 sestatus", "checking sestatus after k8s provision")
+		if err != nil {
+			logrus.Info("Error :checking sestatus after k8s prov")
+			fmt.Println("Error:", err.Error())
+			return err
+		}
 	}
 
 	logrus.Info("DEBUG - ssh.sh sudo shutdown")

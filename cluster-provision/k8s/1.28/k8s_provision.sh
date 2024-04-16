@@ -64,8 +64,6 @@ else
   exit 1
 fi
 
-sleep 1000
-
 export CRIO_VERSION=1.28
 cat << EOF >/etc/yum.repos.d/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}.repo
 [isv_kubernetes_addons_cri-o_stable_v${CRIO_VERSION}]
