@@ -374,8 +374,9 @@ cp -rf /tmp/cdi*.yaml /opt/
 
 # Create a properly labelled tmp directory for testing
 mkdir -p /var/provision/kubevirt.io/tests
-chcon -t container_file_t /var/provision/kubevirt.io/tests
-echo "tmpfs /var/provision/kubevirt.io/tests tmpfs rw,context=system_u:object_r:container_file_t:s0 0 1" >> /etc/fstab
+#chcon -t container_file_t /var/provision/kubevirt.io/tests
+#echo "tmpfs /var/provision/kubevirt.io/tests tmpfs rw,context=system_u:object_r:container_file_t:s0 0 1" >> /etc/fstab
+echo "tmpfs /var/provision/kubevirt.io/tests tmpfs rw 0 1" >> /etc/fstab
 
 # Cleanup the existing NetworkManager profiles so the VM instances will come
 # up with the default profiles. (Base VM image includes non default settings)
