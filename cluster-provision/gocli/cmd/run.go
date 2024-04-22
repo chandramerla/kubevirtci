@@ -353,8 +353,6 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 		return err
 	}
 
-	time.Sleep(20 * time.Second)
-
 	// Pull the registry image
 	err = docker.ImagePull(cli, ctx, utils.DockerRegistryImage, types.ImagePullOptions{})
 	if err != nil {
