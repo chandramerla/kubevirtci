@@ -179,15 +179,18 @@ qemu-system-s390x \
     -enable-kvm \
     -drive format=qcow2,file=${next},if=none,cache=unsafe,id=drive1 ${block_dev_arg} \
     -device virtio-blk,drive=drive1,bootindex=1 \
-    -machine s390-ccw-virtio,accel=kvm \
     -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
+    -initrd /initrd.img \
+    -kernel /vmlinuz \
+    -append "$(cat /kernel.args) $(cat /additional.kernel.args) ${KERNEL_ARGS}" \
     -vnc :${n} \
     -cpu host \
     -m 32767M \
     -smp 16 \
     -serial pty \
+    -machine s390-ccw-virtio,accel=kvm \
     -uuid $(cat /proc/sys/kernel/random/uuid) \
     ${QEMU_ARGS} \
     >"$qemu_log" 2>&1

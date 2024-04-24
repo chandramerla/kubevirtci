@@ -35,5 +35,7 @@ RUN echo "Centos9 version $centos_version"
 COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 #RUN curl -L -o /initrd.img http://mirror.stream.centos.org/9-stream/BaseOS/s390x/os/images/initrd.img
 #RUN curl -L -o /vmlinuz http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/images/pxeboot/vmlinuz
+RUN virt-copy-out -a CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 --format=qcow2 /boot/vmlinuz-* /vmlinuz
+RUN virt-copy-out -a CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 --format=qcow2 /boot/initramfs-* /initrd.img
 
 COPY scripts/* /
