@@ -6,8 +6,8 @@ WORKDIR /
 
 COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 
-RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^vmlinuz- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /vmlinuz
-RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^initramfs- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /initrd.img
+RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^vmlinuz- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
+RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^initramfs- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
 
 FROM docker.io/s390x/fedora:latest
 #TODO: Need to hardcode to shal hash than using latest tag to be 
@@ -47,8 +47,7 @@ COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 #RUN curl -L -o /vmlinuz http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/images/pxeboot/vmlinuz
 # RUN virt-copy-out -a CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 --format=qcow2 /boot/vmlinuz-* /vmlinuz
 # RUN virt-copy-out -a CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 --format=qcow2 /boot/initramfs-* /initrd.img
-COPY --from=kernelfiles /vmlinuz-* /
-COPY --from=kernelfiles /vmlinuz /
-COPY --from=kernelfiles /initrd.img /
+COPY --from=kernelfiles /vmlinuz-* /vmlinuz
+COPY --from=kernelfiles /initramfs-* /initrd.img
 
 COPY scripts/* /
