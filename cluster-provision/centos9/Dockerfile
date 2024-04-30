@@ -52,4 +52,6 @@ COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 COPY --from=kernelfiles /vmlinuz-* /vmlinuz
 COPY --from=kernelfiles /initramfs-* /initrd.img
 
+RUN echo "Debug: Current directory contents" && ls -l /
+
 COPY scripts/* /
