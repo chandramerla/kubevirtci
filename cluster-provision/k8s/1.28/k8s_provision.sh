@@ -381,7 +381,6 @@ echo "tmpfs /var/provision/kubevirt.io/tests tmpfs rw 0 1" >> /etc/fstab
 
 # Cleanup the existing NetworkManager profiles so the VM instances will come
 # up with the default profiles. (Base VM image includes non default settings)
-sleep 10000
 echo "BEFORE nmcli"
 if [ -f /etc/udev/rules.d/70-persistent-net.rules ]; then
     cat /etc/udev/rules.d/70-persistent-net.rules
