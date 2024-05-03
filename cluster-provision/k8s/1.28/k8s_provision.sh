@@ -381,8 +381,45 @@ echo "tmpfs /var/provision/kubevirt.io/tests tmpfs rw 0 1" >> /etc/fstab
 
 # Cleanup the existing NetworkManager profiles so the VM instances will come
 # up with the default profiles. (Base VM image includes non default settings)
+sleep 10000
+echo "BEFORE nmcli"
+if [ -f /etc/udev/rules.d/70-persistent-net.rules ]; then
+    cat /etc/udev/rules.d/70-persistent-net.rules
+fi
+if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
+    cat /etc/udev/rules.d/ifcfg-eth0
+fi
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+cat /boot/loader/entries/*.conf
+cat /proc/cmdline
+
 rm -f /etc/sysconfig/network-scripts/ifcfg-*
 nmcli connection add con-name eth0 ifname eth0 type ethernet
+
+echo "AFTER nmcli"
+if [ -f /etc/udev/rules.d/70-persistent-net.rules ]; then
+    cat /etc/udev/rules.d/70-persistent-net.rules
+fi
+if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
+    cat /etc/udev/rules.d/ifcfg-eth0
+fi
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+cat /boot/loader/entries/*.conf
+cat /proc/cmdline
+
+sed -i '/^options/s/$/ biosdevname=0/' /boot/loader/entries/*.conf
+zipl -V
+
+echo "AFTER zipl"
+if [ -f /etc/udev/rules.d/70-persistent-net.rules ]; then
+    cat /etc/udev/rules.d/70-persistent-net.rules
+fi
+if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
+    cat /etc/udev/rules.d/ifcfg-eth0
+fi
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+cat /boot/loader/entries/*.conf
+cat /proc/cmdline
 
 # Remove machine-id, allowing unique ID/s for its instances
 rm -f /etc/machine-id ; touch /etc/machine-id
