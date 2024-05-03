@@ -500,7 +500,7 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 		}
 
 		if hugepages2Mcount > 0 {
-			kernelArgs += fmt.Sprintf(" hugepagesz=2M hugepages=%d", hugepages2Mcount)
+			kernelArgs += ""
 		}
 
 		if fipsEnabled {
