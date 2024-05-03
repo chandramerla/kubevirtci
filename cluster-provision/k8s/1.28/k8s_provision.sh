@@ -388,9 +388,15 @@ fi
 if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
     cat /etc/udev/rules.d/ifcfg-eth0
 fi
-cat /etc/sysconfig/network-scripts/ifcfg-eth0
-cat /boot/loader/entries/*.conf
-cat /proc/cmdline
+if [ -f /etc/sysconfig/network-scripts/ifcfg-eth0 ]; then
+    cat /etc/sysconfig/network-scripts/ifcfg-eth0
+fi
+if [ -f /boot/loader/entries/*.conf ]; then
+    cat /boot/loader/entries/*.conf
+fi
+if [ -f /proc/cmdline ]; then
+    cat /proc/cmdline
+fi
 
 rm -f /etc/sysconfig/network-scripts/ifcfg-*
 nmcli connection add con-name eth0 ifname eth0 type ethernet
@@ -402,9 +408,15 @@ fi
 if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
     cat /etc/udev/rules.d/ifcfg-eth0
 fi
-cat /etc/sysconfig/network-scripts/ifcfg-eth0
-cat /boot/loader/entries/*.conf
-cat /proc/cmdline
+if [ -f /etc/sysconfig/network-scripts/ifcfg-eth0 ]; then
+    cat /etc/sysconfig/network-scripts/ifcfg-eth0
+fi
+if [ -f /boot/loader/entries/*.conf ]; then
+    cat /boot/loader/entries/*.conf
+fi
+if [ -f /proc/cmdline ]; then
+    cat /proc/cmdline
+fi
 
 sed -i '/^options/s/$/ biosdevname=0/' /boot/loader/entries/*.conf
 zipl -V
@@ -416,9 +428,15 @@ fi
 if [ -f /etc/udev/rules.d/ifcfg-eth0 ]; then
     cat /etc/udev/rules.d/ifcfg-eth0
 fi
-cat /etc/sysconfig/network-scripts/ifcfg-eth0
-cat /boot/loader/entries/*.conf
-cat /proc/cmdline
+if [ -f /etc/sysconfig/network-scripts/ifcfg-eth0 ]; then
+    cat /etc/sysconfig/network-scripts/ifcfg-eth0
+fi
+if [ -f /boot/loader/entries/*.conf ]; then
+    cat /boot/loader/entries/*.conf
+fi
+if [ -f /proc/cmdline ]; then
+    cat /proc/cmdline
+fi
 
 # Remove machine-id, allowing unique ID/s for its instances
 rm -f /etc/machine-id ; touch /etc/machine-id
