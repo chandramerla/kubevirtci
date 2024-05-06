@@ -54,4 +54,8 @@ COPY --from=kernelfiles /initramfs-* /initrd.img
 
 RUN echo "Debug: Current directory contents" && ls -l /
 
+#TODO: Remainder for me to document: This needs to be done in L0 (LPAR/host) level machine.
+#Enable nested virtualization
+RUN echo "options kvm nested=1" >> /etc/modprobe.d/kvm.conf
+
 COPY scripts/* /
