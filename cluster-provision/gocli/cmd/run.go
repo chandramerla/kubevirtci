@@ -423,9 +423,9 @@ func run(cmd *cobra.Command, args []string) (retErr error) {
 		for i := 0; i < int(secondaryNics); i++ {
 			netSuffix := fmt.Sprintf("%d-%d", x, i)
 			macSuffix := fmt.Sprintf("%02x", macCounter)
-			devnoSuffix := fmt.Sprintf("%02x", i+1)
+			devnoSuffix := fmt.Sprintf("%x", 65535-i)
 			macCounter++
-			nodeQemuArgs = fmt.Sprintf("%s -device virtio-net-ccw,netdev=secondarynet%s,mac=52:55:00:d1:56:%s,devno=fe.0.00%s -netdev tap,id=secondarynet%s,ifname=stap%s,script=no,downscript=no", nodeQemuArgs, netSuffix, macSuffix, devnoSuffix, netSuffix, netSuffix)
+			nodeQemuArgs = fmt.Sprintf("%s -device virtio-net-ccw,netdev=secondarynet%s,mac=52:55:00:d1:56:%s,devno=fe.0.%s -netdev tap,id=secondarynet%s,ifname=stap%s,script=no,downscript=no", nodeQemuArgs, netSuffix, macSuffix, devnoSuffix, netSuffix, netSuffix)
 		}
 
 		nodeName := nodeNameFromIndex(x + 1)
