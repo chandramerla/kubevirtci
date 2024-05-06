@@ -179,7 +179,7 @@ qemu-system-s390x \
     -enable-kvm \
     -drive format=qcow2,file=${next},if=none,cache=unsafe,id=drive1 ${block_dev_arg} \
     -device virtio-blk,drive=drive1,bootindex=1 \
-    -device virtio-net-ccw,netdev=network0,bootindex=1,mac=52:55:00:d1:55:${n} \
+    -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} \
     -netdev tap,id=network0,ifname=tap${n},script=no,downscript=no \
     -device virtio-rng \
     -vnc :${n} \
