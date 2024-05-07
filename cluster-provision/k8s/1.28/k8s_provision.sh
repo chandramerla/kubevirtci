@@ -210,9 +210,9 @@ sysctl --system
 
 systemctl restart NetworkManager
 
-nmcli connection modify "System eth0" \
-   ipv6.method auto \
-   ipv6.addr-gen-mode eui64
+# nmcli connection modify "System eth0" \
+#    ipv6.method auto \
+#    ipv6.addr-gen-mode eui64
 nmcli connection up "System eth0"
 
 kubeadmn_patches_path="/provision/kubeadm-patches"
