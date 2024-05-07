@@ -210,6 +210,7 @@ sysctl --system
 
 systemctl restart NetworkManager
 
+# removed nmcli modify ipv6 as having that will change the ipv6 address from global to link type
 # nmcli connection modify "System eth0" \
 #    ipv6.method auto \
 #    ipv6.addr-gen-mode eui64
