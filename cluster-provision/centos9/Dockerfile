@@ -55,7 +55,7 @@ COPY --from=kernelfiles /initramfs-* /initrd.img
 RUN echo "Debug: Current directory contents" && ls -l /
 
 #TODO: Remainder for me to document: This needs to be done in L0 (LPAR/host) level machine.
-#Enable nested virtualization
+#Enable nested virtualization. https://access.redhat.com/documentation/zh/red_hat_enterprise_linux/8/html/configuring_and_managing_virtualization/getting-started-with-virtualization-in-rhel-8-on-ibm-z_configuring-and-managing-virtualization
 RUN echo "options kvm nested=1" >> /etc/modprobe.d/kvm.conf
 
 COPY scripts/* /

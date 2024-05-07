@@ -210,10 +210,10 @@ sysctl --system
 
 systemctl restart NetworkManager
 
-# nmcli connection modify "System eth0" \
-#    ipv6.method auto \
-#    ipv6.addr-gen-mode eui64
-# nmcli connection up "System eth0"
+nmcli connection modify "System eth0" \
+   ipv6.method auto \
+   ipv6.addr-gen-mode eui64
+nmcli connection up "System eth0"
 
 kubeadmn_patches_path="/provision/kubeadm-patches"
 mkdir -p $kubeadmn_patches_path
@@ -398,7 +398,12 @@ if [ -f /proc/cmdline ]; then
     cat /proc/cmdline
 fi
 
+#Enable debug logs for systemd-journald. Use commands like journalctl -k -p debug or dmesg --level=debug to see debug logs
+sysctl -w kernel.printk="7 4 1 7"
+
 rm -f /etc/sysconfig/network-scripts/ifcfg-*
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+nmcli connection delete 'System eth0'
 nmcli connection add con-name eth0 ifname eth0 type ethernet
 
 echo "AFTER nmcli"
