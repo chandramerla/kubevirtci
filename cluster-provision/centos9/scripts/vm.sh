@@ -200,21 +200,24 @@ for part_index in "${!qemu_parts[@]}"; do
   part="${qemu_parts[$part_index]}"
   nxtpart="${qemu_parts[$part_index+1]}"
   if [ "$part" == "-netdev" ]; then
-    if [ "$nxtpart" == *"secondarynet"* ]; then
-      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/-netdev $nxtpart//")
+    if [[ "$nxtpart" == *"secondarynet"* ]]; then
+      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/ -netdev $nxtpart//")
       qemu_monitor_cmds+=("netdev_add $nxtpart")
     fi
-  elif [ "$part" == "-device" ] && [ "$nxtpart" == *"virtio-net-ccw"* ]; then
-    if [ $nxtpart == *"secondarynet"* ]; then
-      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/-device $nxtpart//")
+  elif [ "$part" == "-device" ] && [[ "$nxtpart" == *"virtio-net-ccw"* ]]; then
+    if [[ $nxtpart == *"secondarynet"* ]]; then
+      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/ -device $nxtpart//")
       qemu_monitor_cmds+=("device_add $nxtpart")
     fi
   fi
 done
 
 qemu_system_cmd+=" -monitor unix:/tmp/qemu-monitor.sock,server,nowait"
-eval "$qemu_system_cmd"
-sleep 20
-for qemu_monitor_cmd in {qemu_monitor_cmds[@]}; do
+eval "nohup $qemu_system_cmd &"
+
+sleep 5
+#Sorted in reverse alphabetical order so that -netdev are passed first then -dev
+IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | sort -r))
+for qemu_monitor_cmd in "${qemu_monitor_cmds_sorted[@]}"; do
   echo "$qemu_monitor_cmd"  | socat - UNIX-CONNECT:/tmp/qemu-monitor.sock
 done
