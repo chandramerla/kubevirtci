@@ -177,7 +177,7 @@ qemu_log="qemu_log.txt"
 # qemu-system-s390x -enable-kvm -drive format=qcow2,file=${next},if=virtio,cache=unsafe -machine s390-ccw-virtio -device virtio-net-ccw,netdev=network0,mac=52:55:00:d1:55:${n} -netdev tap,id=network0,ifname=tap01,script=no,downscript=no -device virtio-rng -vnc :01 -cpu host -m 3096M -smp 2 -serial pty -uuid $(cat /proc/sys/kernel/random/uuid)
    #To use the CPU topology, you currently need to choose the KVM accelerator.
    #As per https://www.qemu.org/docs/master/system/s390x/bootdevices.html#booting-without-bootindex-parameter -drive if=virtio can't be specified with bootindex
-qemu-system-s390x \
+qemu_system_cmd="qemu-system-s390x \
     -enable-kvm \
     -drive format=qcow2,file=${next},if=none,cache=unsafe,id=drive1 ${block_dev_arg} \
     -device virtio-blk,drive=drive1,bootindex=1 \
@@ -191,6 +191,30 @@ qemu-system-s390x \
     -serial pty \
     -machine s390-ccw-virtio,accel=kvm \
     -uuid $(cat /proc/sys/kernel/random/uuid) \
-    ${QEMU_ARGS} \
-    >"$qemu_log" 2>&1
-cat "qemu_log.txt"
+    ${QEMU_ARGS}"
+
+# Remove secondary network devices from qemu_system_cmd and move them to qemu_monitor_cmds, so that those devices are later added after VM is started using qemu monitor to avoid primary network interface to be named other than eth0
+qemu_monitor_cmds=()
+IFS=' ' read -r -a qemu_parts <<< "$qemu_system_cmd"
+for part_index in "${!qemu_parts[@]}"; do
+  part="${qemu_parts[$part_index]}"
+  nxtpart="${qemu_parts[$part_index+1]}"
+  if [ "$part" == "-netdev" ]; then
+    if [ "$nxtpart" == *"secondarynet"* ]; then
+      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/-netdev $nxtpart//")
+      qemu_monitor_cmds+=("netdev_add $nxtpart")
+    fi
+  elif [ "$part" == "-device" ] && [ "$nxtpart" == *"virtio-net-ccw"* ]; then
+    if [ $nxtpart == *"secondarynet"* ]; then
+      qemu_system_cmd=$(echo "$qemu_system_cmd" | sed "s/-device $nxtpart//")
+      qemu_monitor_cmds+=("device_add $nxtpart")
+    fi
+  fi
+done
+
+qemu_system_cmd+=" -monitor unix:/tmp/qemu-monitor.sock,server,nowait"
+eval "$qemu_system_cmd"
+sleep 20
+for qemu_monitor_cmd in {qemu_monitor_cmds[@]}; do
+  echo "$qemu_monitor_cmd"  | socat - UNIX-CONNECT:/tmp/qemu-monitor.sock
+done
