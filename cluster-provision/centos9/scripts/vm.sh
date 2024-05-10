@@ -217,11 +217,13 @@ eval "nohup $qemu_system_cmd &"
 PID=$!
 echo "PID is $PID"
 
-sleep 5
-#Sorted in reverse alphabetical order so that -netdev are passed first then -dev
-IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | sort -r))
-for qemu_monitor_cmd in "${qemu_monitor_cmds_sorted[@]}"; do
-  echo "$qemu_monitor_cmd"  | socat - UNIX-CONNECT:/tmp/qemu-monitor.sock
-done
+if [ -n "${qemu_monitor_cmds[@]}" ]; then
+  sleep 5
+  #Sorted in reverse alphabetical order so that -netdev are passed first then -dev
+  IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | sort -r))
+  for qemu_monitor_cmd in "${qemu_monitor_cmds_sorted[@]}"; do
+    echo "$qemu_monitor_cmd"  | socat - UNIX-CONNECT:/tmp/qemu-monitor.sock
+  done
+fi
 
 wait $PID
