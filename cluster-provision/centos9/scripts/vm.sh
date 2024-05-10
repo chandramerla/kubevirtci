@@ -168,8 +168,6 @@ for size in ${USB_SIZES[@]}; do
   let "disk_num+=1"
 done
 
-sleep 10000
-
 #Docs: https://www.qemu.org/docs/master/system/invocation.html
 #     https://www.qemu.org/docs/master/system/target-s390x.html
 qemu_log="qemu_log.txt"
@@ -213,7 +211,11 @@ for part_index in "${!qemu_parts[@]}"; do
 done
 
 qemu_system_cmd+=" -monitor unix:/tmp/qemu-monitor.sock,server,nowait"
+PID=0
+echo "PID initially is $PID"
 eval "nohup $qemu_system_cmd &"
+PID=$!
+echo "PID is $PID"
 
 sleep 5
 #Sorted in reverse alphabetical order so that -netdev are passed first then -dev
@@ -221,3 +223,5 @@ IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | 
 for qemu_monitor_cmd in "${qemu_monitor_cmds_sorted[@]}"; do
   echo "$qemu_monitor_cmd"  | socat - UNIX-CONNECT:/tmp/qemu-monitor.sock
 done
+
+wait $PID
