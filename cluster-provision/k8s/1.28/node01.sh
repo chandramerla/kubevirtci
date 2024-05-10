@@ -20,8 +20,6 @@ rules:
 EOF
 fi
 
-sleep 10000
-
 timeout=30
 interval=5
 while ! hostnamectl  |grep Transient ; do
