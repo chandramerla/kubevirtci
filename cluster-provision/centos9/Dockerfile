@@ -16,7 +16,7 @@ FROM docker.io/s390x/fedora:latest
 
 ARG centos_version
 
-RUN dnf -y install jq iptables iproute dnsmasq qemu openssh-clients screen bind-utils tcpdump iputils && dnf clean all
+RUN dnf -y install jq iptables iproute dnsmasq qemu socat openssh-clients screen bind-utils tcpdump iputils && dnf clean all
 
 WORKDIR /
 
