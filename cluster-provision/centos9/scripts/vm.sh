@@ -217,7 +217,7 @@ eval "nohup $qemu_system_cmd &"
 PID=$!
 echo "PID is $PID"
 
-if [ -n "${qemu_monitor_cmds[@]}" ]; then
+if [ "${#qemu_monitor_cmds[@]}" -gt 0 ]; then
   sleep 5
   #Sorted in reverse alphabetical order so that -netdev are passed first then -dev
   IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | sort -r))
