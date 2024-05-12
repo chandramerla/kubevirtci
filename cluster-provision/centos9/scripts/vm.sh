@@ -218,7 +218,7 @@ PID=$!
 echo "PID is $PID"
 
 if [ "${#qemu_monitor_cmds[@]}" -gt 0 ]; then
-  sleep 5
+  sleep 15
   #Sorted in reverse alphabetical order so that -netdev are passed first then -dev
   IFS=$'\t' qemu_monitor_cmds_sorted=($(printf "%s\n" "${qemu_monitor_cmds[@]}" | sort -r))
   for qemu_monitor_cmd in "${qemu_monitor_cmds_sorted[@]}"; do
