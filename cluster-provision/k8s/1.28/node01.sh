@@ -20,6 +20,9 @@ rules:
 EOF
 fi
 
+#Workaround: Without this hostnamectl is showing only static hostname, but not transient. Though DHCP server is returning hostname, it is not getting set. Need to find the reason.
+hostnamectl set-hostname ""
+
 timeout=3000
 interval=5
 while ! hostnamectl  |grep Transient ; do
@@ -92,4 +95,5 @@ kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f "$local_volume_manifes
 
 # ceph mon permission
 mkdir -p /var/lib/rook
-chcon -t container_file_t /var/lib/rook
+#As SELinux is disabled temporarily, remove related changes
+#chcon -t container_file_t /var/lib/rook

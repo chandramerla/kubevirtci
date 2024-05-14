@@ -11,6 +11,10 @@ if [ -f /home/cloud-user/single_stack ]; then
     control_ip=[fd00::101]
 fi
 
+
+#Workaround: Without this hostnamectl is showing only static hostname, but not transient. Though DHCP server is returning hostname, it is not getting set. Need to find the reason.
+hostnamectl set-hostname ""
+
 timeout=30
 interval=5
 while ! hostnamectl  |grep Transient ; do
@@ -77,4 +81,5 @@ kubeadm join --token abcdef.1234567890123456 ${control_ip}:6443 --ignore-preflig
 
 # ceph mon permission
 mkdir -p /var/lib/rook
-chcon -t container_file_t /var/lib/rook
+#As SELinux is disabled temporarily, remove related changes
+#chcon -t container_file_t /var/lib/rook
