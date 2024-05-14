@@ -20,7 +20,7 @@ rules:
 EOF
 fi
 
-timeout=30
+timeout=3000
 interval=5
 while ! hostnamectl  |grep Transient ; do
     echo "Waiting for dhclient to set the hostname from dnsmasq"
