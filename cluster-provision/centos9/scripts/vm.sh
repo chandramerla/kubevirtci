@@ -226,4 +226,6 @@ if [ "${#qemu_monitor_cmds[@]}" -gt 0 ]; then
   done
 fi
 
+sleep 10000
+
 wait $PID
