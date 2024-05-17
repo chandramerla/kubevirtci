@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alessio/shellescape"
 	"github.com/docker/docker/api/types"
@@ -230,6 +231,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		return err
 	}
 
+	time.Sleep(time.Second*10000)
 	// Wait for ssh.sh script to exist
 	logrus.Info("Wait for ssh.sh script to exist")
 	err = _cmd(cli, nodeContainer(prefix, nodeName), "while [ ! -f /ssh_ready ] ; do echo 'Waiting for /ssh_ready...'; ls -l /; sleep 1; done", "checking for ssh.sh script")
