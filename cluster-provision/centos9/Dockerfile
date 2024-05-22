@@ -8,8 +8,9 @@ COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 
 ENV LIBGUESTFS_BACKEND=direct
 
-RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^vmlinuz- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
-RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep ^initramfs- | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
+
+RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep -E '^vmlinuz-|^initramfs-' | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
+RUN guestfish --rw --add box.qcow2 --mount /dev/sda1:/ selinux-relabel /etc/selinux/targeted/contexts/files/file_contexts /
 
 FROM docker.io/s390x/fedora:latest
 #TODO: Need to hardcode to shal hash than using latest tag to be 
