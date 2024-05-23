@@ -8,9 +8,9 @@ COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
 
 ENV LIBGUESTFS_BACKEND=direct
 
-
 RUN guestfish --ro --add box.qcow2 --mount /dev/sda1:/ ls /boot/ | grep -E '^vmlinuz-|^initramfs-' | xargs -I {} guestfish --ro --add box.qcow2 -i copy-out /boot/{} /
-RUN guestfish --rw --add box.qcow2 --mount /dev/sda1:/ selinux-relabel /etc/selinux/targeted/contexts/files/file_contexts /
+
+
 
 FROM docker.io/s390x/fedora:latest
 #TODO: Need to hardcode to shal hash than using latest tag to be 
@@ -34,7 +34,6 @@ RUN curl -LO https://github.com/ibm-jitendra/kubevirt_pkgs/raw/main/dockerize-li
   && mv dockerize /usr/local/bin/
 
 #COPY scripts/download_box.sh /
-
 RUN echo "Centos9 version $centos_version"
 
 #Doc: https://docs.openstack.org/image-guide/introduction.html
@@ -46,6 +45,7 @@ RUN echo "Centos9 version $centos_version"
 #RUN /download_box.sh ${CENTOS_URL}
 
 COPY  CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 box.qcow2
+RUN guestfish --rw --add box.qcow2 --mount /dev/sda1:/ selinux-relabel /etc/selinux/targeted/contexts/files/file_contexts /
 #RUN curl -L -o /initrd.img http://mirror.stream.centos.org/9-stream/BaseOS/s390x/os/images/initrd.img
 #RUN curl -L -o /vmlinuz http://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/images/pxeboot/vmlinuz
 # RUN virt-copy-out -a CentOS-Stream-GenericCloud-9-latest.s390x.qcow2 --format=qcow2 /boot/vmlinuz-* /vmlinuz
