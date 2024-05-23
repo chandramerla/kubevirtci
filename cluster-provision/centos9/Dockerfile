@@ -1,6 +1,6 @@
 FROM docker.io/s390x/fedora:latest AS kernelfiles
 
-RUN dnf -y install libguestfs && dnf clean all
+RUN dnf -y install libguestfs libguestfs-tools && dnf clean all
 
 WORKDIR /
 
