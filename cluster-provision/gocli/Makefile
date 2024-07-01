@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 IMAGES_FILE ?= images.json
 KUBEVIRTCI_IMAGE_REPO ?= quay.io/kubevirtci
-GOARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
+ARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
 
 export GO111MODULE=on
 export GOPROXY=direct
@@ -20,7 +20,7 @@ test:
 
 .PHONY: gocli
 cli:
-	CGO_ENABLED=0 GOOS=linux GOARCH=${GOARCH} $(GO) build -ldflags "-X 'kubevirt.io/kubevirtci/cluster-provision/gocli/images.SUFFIX=:$(KUBEVIRTCI_TAG)'" -o $(BIN_DIR)/cli ./cmd/cli
+	CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} $(GO) build -ldflags "-X 'kubevirt.io/kubevirtci/cluster-provision/gocli/images.SUFFIX=:$(KUBEVIRTCI_TAG)'" -o $(BIN_DIR)/cli ./cmd/cli
 .PHONY: fmt
 fmt:
 	$(GO) fmt ./cmd/...
@@ -28,11 +28,11 @@ fmt:
 
 .PHONY: container
 container: cli
-	docker build -t ${KUBEVIRTCI_IMAGE_REPO}/gocli build/
+	docker build -t ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH} build/
 
 .PHONY: container-run
 container-run: container
-	docker run ${KUBEVIRTCI_IMAGE_REPO}/gocli
+	docker run ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH}
 
 .PHONY: vendor
 vendor:
@@ -41,4 +41,4 @@ vendor:
 
 .PHONY: push
 push: container
-	docker push ${KUBEVIRTCI_IMAGE_REPO}/gocli
+	docker push ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH}
