@@ -58,12 +58,18 @@ function build_centos9_base_image_with_deps() {
 
 function build_clusters() {
   for i in ${IMAGES_TO_BUILD[@]}; do
-    echo "INFO: building $i"
-    cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i
-    ${CRI_BIN} tag ${TARGET_REPO}/k8s-$i ${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}
+    if [ $ARCH != "s390x" ]; then
+      echo "INFO: building $i"
+      cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i
+      ${CRI_BIN} tag ${TARGET_REPO}/k8s-$i ${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}
 
-    cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i --slim
-    ${CRI_BIN} tag ${TARGET_REPO}/k8s-$i ${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim
+      cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i --slim
+      ${CRI_BIN} tag ${TARGET_REPO}/k8s-$i ${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim
+    elif [ $ARCH == "s390x" ] && [ $i == "1.28" ]; then
+      echo "INFO: building $i slim"
+      cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i --slim
+      ${CRI_BIN} tag ${TARGET_REPO}/k8s-$i ${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim
+    fi
   done
 }
 
@@ -77,12 +83,18 @@ function push_node_base_image() {
 
 function push_cluster_images() {
   for i in ${IMAGES_TO_BUILD[@]}; do
-    echo "INFO: push $i"
-    TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}"
-    podman push "$TARGET_IMAGE"
+    if [ $ARCH != "s390x" ]; then
+      echo "INFO: push $i"
+      TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}"
+      podman push "$TARGET_IMAGE"
 
-    TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim"
-    podman push "$TARGET_IMAGE"
+      TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim"
+      podman push "$TARGET_IMAGE"
+    elif [ $ARCH == "s390x" ] && [ $i == "1.28" ]; then
+      echo "INFO: push $i slim"
+      TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}-slim"
+      podman push "$TARGET_IMAGE"
+    fi
   done
 
   # images that the change doesn't affect can be retagged from previous tag
@@ -165,10 +177,18 @@ function main() {
   run_provision_manager
   publish_clusters
   for i in ${IMAGES_TO_BUILD[@]}; do
-    publish_manifest k8s-$i $KUBEVIRTCI_TAG
-    publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
+    if [ $ARCH != "s390x" ]; then
+      echo "INFO: publish manifests of $i"
+      publish_manifest k8s-$i $KUBEVIRTCI_TAG
+      publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
+    elif [ $ARCH == "s390x" ] && [ $i == "1.28" ]; then
+      echo "INFO: publish manifest of $i slim"
+      publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
+    fi
   done
   publish_alpine_container_disk
+  push_gocli
+  publish_manifest "gocli" $KUBEVIRTCI_TAG
   create_git_tag
 }
 
