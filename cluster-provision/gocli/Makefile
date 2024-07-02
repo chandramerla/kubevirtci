@@ -2,7 +2,9 @@ SHELL := /bin/bash
 
 IMAGES_FILE ?= images.json
 KUBEVIRTCI_IMAGE_REPO ?= quay.io/kubevirtci
-ARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
+GOARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
+ARCH := $(shell uname -m | grep -q s390x && echo s390x || echo amd64)
+
 
 export GO111MODULE=on
 export GOPROXY=direct
@@ -20,7 +22,7 @@ test:
 
 .PHONY: gocli
 cli:
-	CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} $(GO) build -ldflags "-X 'kubevirt.io/kubevirtci/cluster-provision/gocli/images.SUFFIX=:$(KUBEVIRTCI_TAG)'" -o $(BIN_DIR)/cli ./cmd/cli
+	CGO_ENABLED=0 GOOS=linux GOARCH=${GOARCH} $(GO) build -ldflags "-X 'kubevirt.io/kubevirtci/cluster-provision/gocli/images.SUFFIX=:$(KUBEVIRTCI_TAG)'" -o $(BIN_DIR)/cli ./cmd/cli
 .PHONY: fmt
 fmt:
 	$(GO) fmt ./cmd/...
