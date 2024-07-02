@@ -162,8 +162,6 @@ function main() {
     exit 0
   fi
   build_gocli
-  push_gocli
-  publish_manifest "gocli" $KUBEVIRTCI_TAG
   run_provision_manager
   publish_clusters
   for i in ${IMAGES_TO_BUILD[@]}; do
