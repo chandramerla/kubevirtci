@@ -186,7 +186,10 @@ function main() {
       publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
     fi
   done
-  publish_alpine_container_disk
+  # Currently the underlying build tool alpine-make-vm-image supports only xx86_64 and aarch64
+  if [ $ARCH != "s390x" ]; then
+    publish_alpine_container_disk
+  fi
   push_gocli
   publish_manifest "gocli" $KUBEVIRTCI_TAG
   create_git_tag
