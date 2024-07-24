@@ -57,7 +57,7 @@ function build_centos9_base_image_with_deps() {
 }
 
 function build_clusters() {
-  for i in ${IMAGES_TO_BUILD[@]}; do
+  for i in "${IMAGES_TO_BUILD[@]}"; do
     if [ $ARCH != "s390x" ]; then
       echo "INFO: building $i"
       cluster-provision/gocli/build/cli provision --phases k8s cluster-provision/k8s/$i
@@ -78,11 +78,10 @@ function push_node_base_image() {
   podman tag ${TARGET_REPO}/centos9-base:latest ${TARGET_IMAGE}
   echo "INFO: push $TARGET_IMAGE"
   podman push ${TARGET_IMAGE}
-  echo ${TARGET_IMAGE} > cluster-provision/k8s/base-image
 }
 
 function push_cluster_images() {
-  for i in ${IMAGES_TO_BUILD[@]}; do
+  for i in "${IMAGES_TO_BUILD[@]}"; do
     if [ $ARCH != "s390x" ]; then
       echo "INFO: push $i"
       TARGET_IMAGE="${TARGET_REPO}/k8s-$i-${ARCH}:${KUBEVIRTCI_TAG}"
@@ -153,40 +152,40 @@ function create_git_tag() {
 }
 
 publish_manifest() {
-  if [ $ARCH != "s390x" ]; then
-    local amend
-    local image_name="${1:?}"
-    local image_tag="${2:?}"
-    local full_image_name="${TARGET_REPO}/${image_name}:${image_tag}"
-    amend=""
-    for arch in ${archs[*]};do
-        amend+=" --amend ${TARGET_REPO}/${image_name}-${arch}:${image_tag}"
-    done
-    podman manifest create ${full_image_name} ${amend}
-    podman manifest push ${full_image_name} "docker://${full_image_name}"
+  local amend=""
+  local image_name="${1:?}"
+  local image_tag="${2:?}"
+  local full_image_name="${TARGET_REPO}/${image_name}:${image_tag}"
+  if [[ "$image_name" != "centos9" && "$image_name" != "gocli" && !( "$image_name" = "k8s-1.28" && "$image_tag" =~ "slim" ) ]]; then
+    unset 'archs[1]'
   fi
+  for arch in ${archs[*]};do
+    amend+=" --amend ${TARGET_REPO}/${image_name}-${arch}:${image_tag}"
+  done
+  podman manifest create ${full_image_name} ${amend}
+  podman manifest push ${full_image_name} "docker://${full_image_name}"
 }
 
 function main() {
   if [ "$PHASES" == "linux" ]; then
     publish_node_base_image
-    publish_manifest "centos9" $KUBEVIRTCI_TAG
+    if [ $ARCH != "s390x" ]; then
+      publish_manifest "centos9" $KUBEVIRTCI_TAG
+      echo "${TARGET_REPO}/centos9:${KUBEVIRTCI_TAG}" > cluster-provision/k8s/base-image
+    fi
     exit 0
   fi
   build_gocli
   run_provision_manager
   publish_clusters
-  for i in ${IMAGES_TO_BUILD[@]}; do
+  for i in "${IMAGES_TO_BUILD[@]}"; do
     if [ $ARCH != "s390x" ]; then
       echo "INFO: publish manifests of $i"
       publish_manifest k8s-$i $KUBEVIRTCI_TAG
       publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
-    elif [ $ARCH == "s390x" ] && [ $i == "1.28" ]; then
-      echo "INFO: publish manifest of $i slim"
-      publish_manifest k8s-$i ${KUBEVIRTCI_TAG}-slim
     fi
   done
-  # Currently the underlying build tool alpine-make-vm-image supports only xx86_64 and aarch64
+  # Currently the underlying build tool alpine-make-vm-image supports only x86_64 and aarch64
   if [ $ARCH != "s390x" ]; then
     publish_alpine_container_disk
   fi
