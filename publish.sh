@@ -1,6 +1,10 @@
 #!/bin/bash
 
 set -e
+# Uncomment to run/debug in environment where docker is available instead of podman
+#podman() {
+#    docker "$@"
+#}
 
 archs=(amd64 s390x)
 ARCH=$(uname -m | grep -q s390x && echo s390x || echo amd64)
@@ -157,7 +161,7 @@ publish_manifest() {
   local image_name="${1:?}"
   local image_tag="${2:?}"
   local full_image_name="${TARGET_REPO}/${image_name}:${image_tag}"
-  if [[ "$image_name" != "centos9" && "$image_name" != "gocli" && !( "$image_name" = "k8s-1.28" && "$image_tag" =~ "slim" ) ]]; then
+  if [[ "$image_name" != "centos9" && "$image_name" != "gocli" && ! ( "$image_name" = "k8s-1.28" && "$image_tag" =~ "slim" ) ]]; then
     unset 'archs[1]'
   fi
   for arch in ${archs[*]};do
@@ -191,7 +195,9 @@ function main() {
     publish_alpine_container_disk
   fi
   push_gocli
-  publish_manifest "gocli" $KUBEVIRTCI_TAG
+  if [ $ARCH != "s390x" ]; then
+    publish_manifest "gocli" $KUBEVIRTCI_TAG
+  fi
   create_git_tag
 }
 
