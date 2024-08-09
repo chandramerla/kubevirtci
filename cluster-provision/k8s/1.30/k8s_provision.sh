@@ -2,6 +2,8 @@
 
 set -ex
 
+arch=$(uname -m)
+
 source /var/lib/kubevirtci/shared_vars.sh
 
 function getKubernetesClosestStableVersion() {
@@ -62,15 +64,25 @@ function pull_container_retry() {
     fi
 }
 
-export CRIO_VERSION=1.30
-cat << EOF >/etc/yum.repos.d/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}.repo
+if [ "$arch" == "s390x" ]; then
+  export CRIO_VERSION=1.28
+  #As crio version available in kubevirtci-crio-mirror/isv_kubernetes_addons_cri-o_stable_v1.30 is broken with issue https://github.com/containers/crun/issues/1494, which is fixed, but yet to part of crio release
+  BASEURL="https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${CRIO_VERSION}:/${CRIO_VERSION}.4/CentOS_9_Stream/"
+else
+  export CRIO_VERSION=1.30
+  BASEURL="https://storage.googleapis.com/kubevirtci-crio-mirror/isv_kubernetes_addons_cri-o_stable_v${CRIO_VERSION}"
+fi
+
+REPO_CONTENT=$(cat << EOF
 [isv_kubernetes_addons_cri-o_stable_v${CRIO_VERSION}]
 name=CRI-O v${CRIO_VERSION} (Stable) (rpm)
 type=rpm-md
-baseurl=https://storage.googleapis.com/kubevirtci-crio-mirror/isv_kubernetes_addons_cri-o_stable_v${CRIO_VERSION}
+baseurl=${BASEURL}
 gpgcheck=0
 enabled=1
 EOF
+)
+echo "$REPO_CONTENT" | tee /etc/yum.repos.d/devel_kubic_libcontainers_stable_cri-o_${CRIO_VERSION}.repo > /dev/null
 
 dnf install -y cri-o
 
@@ -202,10 +214,13 @@ sysctl --system
 
 systemctl restart NetworkManager
 
-nmcli connection modify "System eth0" \
-   ipv6.method auto \
-   ipv6.addr-gen-mode eui64
-nmcli connection up "System eth0"
+# No need to modify the ethernet connection incase of s390x Architecture.
+if [ "$arch" != "s390x" ]; then
+  nmcli connection modify "System eth0" \
+    ipv6.method auto \
+    ipv6.addr-gen-mode eui64
+  nmcli connection up "System eth0"
+fi
 
 kubeadmn_patches_path="/provision/kubeadm-patches"
 mkdir -p $kubeadmn_patches_path
