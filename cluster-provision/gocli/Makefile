@@ -3,6 +3,7 @@ SHELL := /bin/bash
 IMAGES_FILE ?= images.json
 KUBEVIRTCI_IMAGE_REPO ?= quay.io/kubevirtci
 GOARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
+ARCH := $(shell uname -m | grep -q s390x && echo s390x || echo amd64)
 
 export GO111MODULE=on
 export GOPROXY=direct
@@ -28,11 +29,11 @@ fmt:
 
 .PHONY: container
 container: cli
-	docker build -t ${KUBEVIRTCI_IMAGE_REPO}/gocli build/
+	docker build -t ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH} build/
 
 .PHONY: container-run
 container-run: container
-	docker run ${KUBEVIRTCI_IMAGE_REPO}/gocli
+	docker run ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH}
 
 .PHONY: vendor
 vendor:
@@ -41,4 +42,4 @@ vendor:
 
 .PHONY: push
 push: container
-	docker push ${KUBEVIRTCI_IMAGE_REPO}/gocli
+	docker push ${KUBEVIRTCI_IMAGE_REPO}/gocli-${ARCH}
