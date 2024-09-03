@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+podman() {
+    docker "$@"
+}
 
 archs=(amd64 s390x)
 ARCH=$(uname -m | grep -q s390x && echo s390x || echo amd64)
@@ -14,8 +17,8 @@ function detect_cri() {
     if podman ps >/dev/null 2>&1; then echo podman; elif docker ps >/dev/null 2>&1; then echo docker; fi
 }
 
-TARGET_REPO="quay.io/kubevirtci"
-TARGET_KUBEVIRT_REPO="quay.io/kubevirt"
+TARGET_REPO="icr.io/kubevirtci"
+TARGET_KUBEVIRT_REPO="icr.io/kubevirt"
 TARGET_GIT_REMOTE="https://kubevirt-bot@github.com/kubevirt/kubevirtci.git"
 export CRI_BIN=${CRI_BIN:-$(detect_cri)}
 
@@ -30,7 +33,7 @@ function run_provision_manager() {
       return
   fi
 
-  json_result=$(${CRI_BIN} run --rm -v $(pwd):/workdir:Z quay.io/kubevirtci/gocli provision-manager)
+  json_result=$(${CRI_BIN} run --rm -v $(pwd):/workdir:Z icr.io/kubevirtci/gocli provision-manager)
   echo "INFO: Provision manager results: $json_result"
 
   while IFS=":" read key value; do
@@ -163,7 +166,7 @@ function create_git_tag() {
 
   echo "INFO: push new tag $KUBEVIRTCI_TAG"
   git tag ${KUBEVIRTCI_TAG}
-  git push ${TARGET_GIT_REMOTE} ${KUBEVIRTCI_TAG}
+  #git push ${TARGET_GIT_REMOTE} ${KUBEVIRTCI_TAG}
 }
 
 publish_manifest() {

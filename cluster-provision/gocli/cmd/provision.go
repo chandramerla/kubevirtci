@@ -69,7 +69,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 	}
 
 	if strings.Contains(phases, "linux") {
-		base = fmt.Sprintf("quay.io/kubevirtci/%s", strings.TrimSpace(string(baseBytes)))
+		base = fmt.Sprintf("icr.io/kubevirtci/%s", strings.TrimSpace(string(baseBytes)))
 	} else {
 		k8sPath := fmt.Sprintf("%s/../", packagePath)
 		baseImageBytes, err := os.ReadFile(filepath.Join(k8sPath, "base-image"))
@@ -88,7 +88,7 @@ func provisionCluster(cmd *cobra.Command, args []string) (retErr error) {
 		name = fmt.Sprintf("%s-%s", name, containerSuffix)
 	}
 	prefix := fmt.Sprintf("k8s-%s-provision", name)
-	target := fmt.Sprintf("quay.io/kubevirtci/k8s-%s", name)
+	target := fmt.Sprintf("icr.io/kubevirtci/k8s-%s", name)
 	scripts := filepath.Join(packagePath)
 
 	if phases == "linux" {
@@ -362,7 +362,7 @@ func copyDirectory(ctx context.Context, cli *client.Client, containerID string, 
 
 func _cmd(cli *client.Client, container string, cmd string, description string) error {
 	logrus.Info(description)
-	success, err := docker.Exec(cli, container, []string{"/bin/bash", "-c", cmd}, os.Stdout)
+	success, err := docker.Exec(cli, container, []string{"/bin/bash", "-c", "set -x && " + cmd}, os.Stdout)
 	if err != nil {
 		return fmt.Errorf("%s failed: %v", description, err)
 	} else if !success {
