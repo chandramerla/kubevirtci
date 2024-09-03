@@ -2,9 +2,9 @@
 
 set -e
 # Uncomment to run/debug in environment where docker is available instead of podman
-#podman() {
-#    docker "$@"
-#}
+podman() {
+    docker "$@"
+}
 
 archs=(amd64 s390x)
 ARCH=$(uname -m | grep -q s390x && echo s390x || echo amd64)
@@ -18,8 +18,8 @@ function detect_cri() {
     if podman ps >/dev/null 2>&1; then echo podman; elif docker ps >/dev/null 2>&1; then echo docker; fi
 }
 
-TARGET_REPO="quay.io/kubevirtci"
-TARGET_KUBEVIRT_REPO="quay.io/kubevirt"
+TARGET_REPO="icr.io/kubevirtci"
+TARGET_KUBEVIRT_REPO="icr.io/kubevirt"
 TARGET_GIT_REMOTE="https://kubevirt-bot@github.com/kubevirt/kubevirtci.git"
 export CRI_BIN=${CRI_BIN:-$(detect_cri)}
 

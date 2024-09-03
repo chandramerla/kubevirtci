@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 IMAGES_FILE ?= images.json
-KUBEVIRTCI_IMAGE_REPO ?= quay.io/kubevirtci
+KUBEVIRTCI_IMAGE_REPO ?= icr.io/kubevirtci
 GOARCH ?= $$(uname -m | grep -q s390x && echo s390x || echo amd64)
 
 export GO111MODULE=on
