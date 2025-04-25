@@ -1,16 +1,10 @@
 docker.io/rook/ceph:master
-ghcr.io/k8snetworkplumbingwg/multus-cni@sha256:c8bfe5bad3b5371a5677feb9e8e162da91b61bcac409c244f6f1b18c801ad006
-ghcr.io/k8snetworkplumbingwg/multus-cni:v3.8
-# v0.3.4 -> v0.3.6
-ghcr.io/k8snetworkplumbingwg/multus-dynamic-networks-controller@sha256:8061bd1276ff022fe52a0b07bc6fa8d27e5f6f20cf3bf764e76d347d2e3c929b
-# v0.34.2 -> v0.38.2
-ghcr.io/k8snetworkplumbingwg/ovs-cni-plugin@sha256:54be8fcacee50af64deafa9e99f3fe079033630c00c4ed9f74d17b0d91009f10
 ghcr.io/k8snetworkplumbingwg/whereabouts:v0.8.0
-# v0.1.7-alpha -> v0.2.4
-ghcr.io/kubevirt/ipam-controller@sha256:7f9574df14b5b6b0b8e8860a63c658fb683b3f13fdc3223bce5a6cf631c1a142
-# v0.0.15 -> v0.0.18
-ghcr.io/kubevirt/kubesecondarydns@sha256:13186a0512b59c71e975b4c30e69a6ed0122f83d64da762c7fc5b4a7f066a873
-# v0.1.7-alpha -> v0.2.2
+docker.io/grafana/grafana:11.1.0
+
+#Yet to be added to the skip list
+ghcr.io/kubevirt/ipam-controller@sha256:aad40edd34f65cf0e087969853d47065aaf411dccf618d196152b583d40300ba
+ghcr.io/kubevirt/kubesecondarydns@sha256:44489bdf8affb0e82b68a7100bbee7d289151ada54ab2e76a9d3afef769a1f54
 ghcr.io/kubevirt/passt-binding-cni@sha256:981c01e0b94ae691ba8ced43c486930085186e9c40b22525c8f0229d1556ee69
 docker.io/grafana/grafana:11.1.0
 quay.io/brancz/kube-rbac-proxy:v0.18.0

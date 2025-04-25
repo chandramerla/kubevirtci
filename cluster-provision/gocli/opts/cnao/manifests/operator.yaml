@@ -453,7 +453,7 @@ spec:
         - name: PASST_BINDING_CNI_IMAGE
           value: ghcr.io/kubevirt/passt-binding-cni@sha256:981c01e0b94ae691ba8ced43c486930085186e9c40b22525c8f0229d1556ee69
         - name: OPERATOR_IMAGE
-          value: quay.io/kubevirt/cluster-network-addons-operator:v0.96.0
+          value: quay.io/kubevirt/cluster-network-addons-operator:v0.98.1
         - name: OPERATOR_NAME
           value: cluster-network-addons-operator
         - name: OPERATOR_VERSION
@@ -477,7 +477,7 @@ spec:
           value: prometheus-k8s
         - name: RUNBOOK_URL_TEMPLATE
           value: https://kubevirt.io/monitoring/runbooks/%s
-        image: quay.io/kubevirt/cluster-network-addons-operator:v0.96.0
+        image: quay.io/kubevirt/cluster-network-addons-operator:v0.98.1
         imagePullPolicy: Always
         name: cluster-network-addons-operator
         resources:
